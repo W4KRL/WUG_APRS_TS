@@ -1,5 +1,6 @@
 //! In folder WUG_APRS_TS
 //! 12/26/2024 imported to Platformio from D1S-Display-WUG-VEVOR-APRS_24_12_22_WORKING.ino
+//! Synced with https://github.com/W4KRL/WUG_APRS_TS
 
 // this version accomodates modified and unmodified TFT screens
 // it must be compiled as one or the other
