@@ -16,7 +16,7 @@
 // TODO add APRS bulletin for sunrise/sunset
 // TODO test WUG API responses for absence. Do not update WX data if response missing
 
-#define DEBUG //! uncomment this line for serial output
+#define DEBUG //! uncomment this line for serial debug output
 
 // Displays local weather from VEVOR 7-in-1 Weather Station
 // through Weather Underground PWS account
@@ -62,68 +62,19 @@
 //! For general sketch
 #include <Arduino.h>           // [builtin] PlatformIO
 #include "credentials.h"       // Wi-Fi and weather station credentials
-#include <Wire.h>              // [builtin] for I2C sensor
-#include <ESP8266WiFi.h>       // [builtin] for Wi-Fi
+#include "wifiConnection.h"    // Wi-Fi connection functions
+#include "timezone_globals.h" // timezone object
+#include "indoorSensor.h" // indoor sensor functions
+#include "onetimeScreens.h" // splash screen
 #include <ESP8266HTTPClient.h> // [builtin] for http and https
 #include <WiFiClientSecure.h>  // [builtin] for https
 #include <ArduinoJson.h>       // [manager] v7.2 Benoit Blanchon https://arduinojson.org/
 #include <TickTwo.h>           // [manager] v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
-
-//! For Wemos TFT 1.4 display shield https://www.wemos.cc/en/latest/d1_mini_shield/tft_1_4.html
-// 128 x 128 pixels, 18-bit colors, green tab, D1 Mini shield
-#include <TFT_eSPI.h>                       // Setup 7 with CS = D0, GREENTAB
-TFT_eSPI tft;                               // instantiate fast display driver
-#include "colors.h"                         // custom frame colors
-#include "Roboto_Bold_12.h"                 // small font
-#include "Roboto_Bold_16.h"                 // large font
-const GFXfont *SmallBold = &Roboto_Bold_12; // pointer to small font file
-const GFXfont *LargeBold = &Roboto_Bold_16; // pointer to large font file
-//! Display orientation definitions
-#define USB_LEFT 0;                     // Definitions for the
-#define USB_DOWN 1;                     // location of USB port
-#define USB_RIGHT 2;                    // as viewed from
-#define USB_UP 3;                       // the front of the display
-const int FRAME_ORIENTATION = USB_LEFT; // for IoT Kits case
-//! *********** WEMOS TFT 1.4 SETTINGS ******************
-const int SCREEN_W = tft.width();   // width in pixels = 128
-const int SCREEN_H = tft.height();  // height in pixels = 128
-const int SCREEN_W2 = SCREEN_W / 2; // half width
-const int SCREEN_H2 = SCREEN_H / 2; // half height
-const int LEFT_COL = 6;             // left margin
-const int RIGHT_COL = 125;          // right margin
-const int HEADER_RAD = 8;           // radius of frame header corners
-const int HEADER_Y = 37;            // bottom row of frame header
-
-//! For indoor sensor
-#include <Adafruit_AHTX0.h> // [manager] v2.0.5 AHT10 https://github.com/adafruit/Adafruit_AHTX0
-Adafruit_AHTX0 aht;         // instantiate indoor Temperature/Humidity Sensor
-//! sensor definitions
-#define SENSOR_NONE 0
-#define SENSOR_DHT11 1
-#define SENSOR_AHT10 2;
-#define SENSOR_HTU21D 3
-int sensorType = SENSOR_NONE; // default to no sensor
-struct sensorTH               // for indoor sensor
-{
-  float tempC;
-  float humid;
-} indoor;
-
-//! Time functions by Rop Gonggrijp https://github.com/ropg/ezTime
-#include <ezTime.h> // [manager] v0.8.3 NTP & timezone
-Timezone myTZ;      // instantiate local timezone
+#include "unitConversions.h" // unit conversion functions
+#include "debug.h"         // [manager] v1.0.0 Debug
 
 //! For APRS bulletins
 #include <LittleFS.h> // [builtin]
-
-//! Debug print macro
-#ifdef DEBUG
-#define DEBUG_PRINT(x) Serial.print(x)
-#define DEBUG_PRINTLN(x) Serial.println(x)
-#else
-#define DEBUG_PRINT(x)
-#define DEBUG_PRINTLN(x)
-#endif
 
 struct phaseName
 { //! for moon phase name
@@ -136,17 +87,13 @@ struct phaseName
 ************* FUNCTION PROTOTYPES ********************
 ******************************************************
 */
-void logonToRouter();                                  // logon to router
-void splashScreen();                                   // splash screen
-void dataScreen();                                     // show configured parameters screen
+
 void updateFrame();                                    // display frames for selected durations
 void firstWXframe();                                   // current conditions
 void secondWXframe();                                  // forecasted conditions
 void almanacFrame();                                   // date, sun, and moon data
 void digitalClockFrame(bool drawFrame);                // UTC & local time
 void analogClockFrame(bool drawFrame);                 // UTC & local time, indoor temp & humid
-int initSensor();                                      // detect & initialize indoor sensor
-void readSensor();                                     // read indoor sensor
 void getWXforecast();                                  // get forecasted weather
 void getWXcurrent();                                   // get current conditions
 void updateWXcurrent();                                // update weather data
@@ -158,13 +105,6 @@ void APRSsendWX();                                     // send APRS weather data
 void postToAPRS(String message);                       // post data to APRS
 float moonPhase();                                     // moon phase lunation fraction from Unix timestamp
 phaseName findPhaseName(float fraction);               // moon phase name two words
-float DEGtoRAD(float deg);                             // convert degrees to radians
-float CtoF(float tempC);                               // convert Celsius to Fahrenheit
-float MStoMPH(float ms);                               // convert m/s to miles per hour
-float MMtoIN(float mm);                                // convert millimeters to inches
-float KMtoMILES(float km);                             // convert kilometers to miles & kph to mph
-float HPAtoINHG(float hpa);                            // convert hPa (mb) to inches of mercury
-float KMHtoKNOTS(float kmh);                           // km/h to knots
 String getRainIntensity(float rate);                   // convert rain rate to intensity
 String getCompassDirection(int degrees);               // convert degrees to compass direction
 void mountFS();                                        // mount LittleFS
@@ -197,36 +137,6 @@ TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
 #define WX_UNITS "m"                             // e = english, m = metric MUST USE METRIC!!!
 #define WX_FORMAT "json"                         // data format
 #define WX_PRECISION "decimal"                   // null = integer, decimal = decimal
-
-// structure to hold weather data
-//  prefix obs = from observations/current API
-//  prefix for = from forecast/daily/5day API
-struct weather
-{
-  String forPhraseLong;     // long weather forecast 32 characters max
-  String forPhraseShort;    // short weather forecast 12 characters max
-  int forTempMax;           // forcasted high (°C)
-  int forTempMin;           // forecasted low (°C)
-  int forCloud;             // forecasted average cloud coverage (%)
-  unsigned long forSunRise; // sunrise (unix time UTC) from forecast
-  unsigned long forSunSet;  // sunset (unix time UTC) from forecast
-  float obsLat;             // station latitude in decimal degrees
-  float obsLon;             // station longitude in decimal degrees
-  String obsNeighborhood;   // station neighborhood assigned by Weather Underground
-  float obsSolarRadiation;  // luminosity (W/m^2)
-  float obsUV;              // UV index
-  float obsHumidity;        // relative humidity (%)
-  float obsDewPt;           // dewpoint (°C)
-  float obsTemp;            // temperature (°C)
-  float obsHeatIndex;       // temperature feel in Celsius valid for greater than 65°F (18°C)
-  float obsWindChill;       // temperature feel valid below 65°F (18°C)
-  float obsWindDir;         // wind direction degrees clockwise from north
-  float obsWindSpeed;       // km/h
-  float obsWindGust;        // km/h
-  float obsPressure;        // sea level pressure millibars (hPa)
-  float obsPrecipRate;      // instantaneous rate for an hour (mm/h)
-  float obsPrecipTotal;     // total precipitation midnight to present (mm)
-} wx;
 
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!
@@ -307,8 +217,6 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);         // built in LED
   digitalWrite(LED_BUILTIN, HIGH);      // turn off LED
   splashScreen();                       // stays on until logon is complete
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // begin WiFi
-  WiFi.mode(WIFI_STA);                  // explicitly set mode, esp defaults to STA+AP
   logonToRouter();                      // connect to WiFi
   getWXcurrent();                       // find latitude & longitude for your weather station
   waitForSync();                        // sync ezTime with a net time server
@@ -415,80 +323,80 @@ void loop()
 ******************************************************
 */
 
-/*
-******************************************************
-******************* Splash Screen ********************
-******************************************************
-*/
-void splashScreen()
-{
-  // 11/24/2024
-  tft.setFreeFont(LargeBold);
-  tft.fillScreen(BLUE);
-  tft.setTextColor(YELLOW);
-  int tl = 19;
-  tft.setTextDatum(TC_DATUM); // font top, centered
-  tft.drawString("D1S-WUG", SCREEN_W2, tl);
-  tft.drawString("Display", SCREEN_W2, tl + 20);
-  tft.drawString("by", SCREEN_W2, tl + 40);
-  tft.drawString("IoT Kits", SCREEN_W2, tl + 60);
-  tft.drawString("v" + String(FW_VERSION) + "-M", SCREEN_W2, tl + 80);
-  for (int i = 0; i < 4; i++)
-  {
-    tft.drawRoundRect(12 - 3 * i, 12 - 3 * i, SCREEN_W - 12, SCREEN_H - 12, 8, YELLOW);
-  }
-  tft.unloadFont();
-} // splashScreen()
+// /*
+// ******************************************************
+// ******************* Splash Screen ********************
+// ******************************************************
+// */
+// void splashScreen()
+// {
+//   // 11/24/2024
+//   tft.setFreeFont(LargeBold);
+//   tft.fillScreen(BLUE);
+//   tft.setTextColor(YELLOW);
+//   int tl = 19;
+//   tft.setTextDatum(TC_DATUM); // font top, centered
+//   tft.drawString("D1S-WUG", SCREEN_W2, tl);
+//   tft.drawString("Display", SCREEN_W2, tl + 20);
+//   tft.drawString("by", SCREEN_W2, tl + 40);
+//   tft.drawString("IoT Kits", SCREEN_W2, tl + 60);
+//   tft.drawString("v" + String(FW_VERSION) + "-M", SCREEN_W2, tl + 80);
+//   for (int i = 0; i < 4; i++)
+//   {
+//     tft.drawRoundRect(12 - 3 * i, 12 - 3 * i, SCREEN_W - 12, SCREEN_H - 12, 8, YELLOW);
+//   }
+//   tft.unloadFont();
+// } // splashScreen()
 
-/*
-******************************************************
-****************** Data Screen ***********************
-******************************************************
-*/
-void dataScreen()
-{
-  // 12/15/2024
-  tft.fillScreen(BLACK); // clear screen
-  String units = (METRIC_DISPLAY) ? "Metric" : "Imperial";
-  String clock;
-  if (ANALOG_CLOCK && DIGITAL_CLOCK)
-  {
-    clock = "Analog&Digital";
-  }
-  else if (ANALOG_CLOCK && !DIGITAL_CLOCK)
-  {
-    clock = "Analog";
-  }
-  else if (!ANALOG_CLOCK && DIGITAL_CLOCK)
-  {
-    clock = "Digital";
-  }
-  else
-  {
-    clock = "No";
-  }
-  clock += " Clock";
+// /*
+// ******************************************************
+// ****************** Data Screen ***********************
+// ******************************************************
+// */
+// void dataScreen()
+// {
+//   // 12/15/2024
+//   tft.fillScreen(BLACK); // clear screen
+//   String units = (METRIC_DISPLAY) ? "Metric" : "Imperial";
+//   String clock;
+//   if (ANALOG_CLOCK && DIGITAL_CLOCK)
+//   {
+//     clock = "Analog&Digital";
+//   }
+//   else if (ANALOG_CLOCK && !DIGITAL_CLOCK)
+//   {
+//     clock = "Analog";
+//   }
+//   else if (!ANALOG_CLOCK && DIGITAL_CLOCK)
+//   {
+//     clock = "Digital";
+//   }
+//   else
+//   {
+//     clock = "No";
+//   }
+//   clock += " Clock";
 
-  int TR = 0;  // top row
-  int LS = 14; // line spacing
-  tft.setFreeFont(SmallBold);
-  tft.setTextDatum(TC_DATUM); // center text
-  tft.setTextColor(YELLOW);
-  tft.drawString("Location:", SCREEN_W2, TR);
-  tft.drawString(String(wx.obsLat, 2) + "/" + String(wx.obsLon, 2), SCREEN_W2, TR + LS);
-  tft.drawString(wx.obsNeighborhood, SCREEN_W2, TR + 2 * LS);
-  tft.setTextColor(GREEN);
-  tft.drawString("Time Zone:" + getTimezoneName(), SCREEN_W2, TR + 3 * LS);
-  tft.drawString(MY_TIMEZONE, SCREEN_W2, TR + 4 * LS); // Olsen timezone
-  tft.setTextColor(WHITE);
-  tft.drawString("Units & Duration:", SCREEN_W2, TR + 5 * LS);
-  tft.drawString(units + " " + SCREEN_DURATION + " seconds", SCREEN_W2, TR + 6 * LS);
-  tft.drawString(clock, SCREEN_W2, TR + 7 * LS);
-  tft.setTextColor(RED);
-  tft.drawString(APHORISM_FILE, SCREEN_W2, TR + 8 * LS);
+//   int TR = 0;  // top row
+//   int LS = 14; // line spacing
+//   tft.setFreeFont(SmallBold);
+//   tft.setTextDatum(TC_DATUM); // center text
+//   tft.setTextColor(YELLOW);
+//   tft.drawString("Location:", SCREEN_W2, TR);
+//   tft.drawString(String(wx.obsLat, 2) + "/" + String(wx.obsLon, 2), SCREEN_W2, TR + LS);
+//   tft.drawString(wx.obsNeighborhood, SCREEN_W2, TR + 2 * LS);
+//   tft.setTextColor(GREEN);
+//   tft.drawString("Time Zone:" + getTimezoneName(), SCREEN_W2, TR + 3 * LS);
+//   tft.drawString(MY_TIMEZONE, SCREEN_W2, TR + 4 * LS); // Olsen timezone
+//   tft.setTextColor(WHITE);
+//   tft.drawString("Units & Duration:", SCREEN_W2, TR + 5 * LS);
+//   tft.drawString(units + " " + SCREEN_DURATION + " seconds", SCREEN_W2, TR + 6 * LS);
+//   tft.drawString(clock, SCREEN_W2, TR + 7 * LS);
+//   tft.setTextColor(RED);
+//   tft.drawString(APHORISM_FILE, SCREEN_W2, TR + 8 * LS);
 
-  tft.unloadFont();
-} // dataScreen()
+//   tft.unloadFont();
+// } // dataScreen()
 
 /*
 ******************************************************
@@ -1450,104 +1358,8 @@ void postToThingSpeak()
   client.stop();
 } // postToThingSpeak()
 
-/*
-******************************************************
-**************** UNIT CONVERSIONS ********************
-******************************************************
-*/
 
-float CtoF(float tempC) // convert celsius to fahrenheit
-{
-  return 1.8 * tempC + 32.0;
-} // CtoF()
 
-float MStoMPH(float ms) // convert meters per second to miles per hour
-{
-  return 2.23694 * ms;
-} // MStoMPH()
-
-float MMtoIN(float mm) // convert millimeters to inches
-{
-  return mm * 0.0393701;
-} // MMtoIN()
-
-float CMtoIN(float cm)
-{ // convert centimeters to inches
-  return 0.39370 * cm;
-} // CMtoIN()
-
-float KMtoMILES(float km) // convert kilometers to miles or km/h to mph
-{
-  return km * 0.621371;
-} // KMtoMILES()
-
-float DEGtoRAD(float deg) // convert degrees to radians
-{
-  return 0.0174532925 * deg;
-} // DEGtoRAD()
-
-float HPAtoINHG(float hpa) // convert hectoPascal (millibar) to inches of mercury
-{
-  return 0.0295301 * hpa;
-} // HPAtoINHG()
-
-float MtoFT(float meters)
-{ // convert meters to feet
-  return 3.2808 * meters;
-} // MtoFT()
-
-float KMHtoKNOTS(float kmh)
-{
-  return 0.5399668 * kmh;
-} // KMHtoKNOTS()
-
-/*
-******************************************************
-********* Intitialize Indoor Sensor ******************
-******************************************************
-*/
-int initSensor(void)
-{
-  // detect sensor type and initialize
-  int type = SENSOR_NONE;
-  if (aht.begin()) // found AHT10 sensor if true
-  {
-    type = SENSOR_AHT10;
-  }
-  return type;
-} // initSensor()
-
-/*
-******************************************************
-************** Read Inddor Sensor ********************
-******************************************************
-*/
-void readSensor()
-{
-  sensors_event_t humidity, temp;
-  aht.getEvent(&humidity, &temp);
-  indoor.tempC = temp.temperature;
-  indoor.humid = humidity.relative_humidity;
-} // readSensor()
-
-/*
-*******************************************************
-************** Logon to your Wi-Fi router *************
-*******************************************************
-*/
-void logonToRouter()
-{
-  DEBUG_PRINT("\n\nConnecting to " + (String)WIFI_SSID);
-
-  while (WiFi.status() != WL_CONNECTED)
-  { // Wait for the Wi-Fi to connect
-    delay(500);
-    DEBUG_PRINT('.');
-  }
-
-  DEBUG_PRINT("\nWi-Fi connected. IP address: ");
-  DEBUG_PRINTLN(WiFi.localIP()); // Send the IP address of the ESP8266 to the computer
-} // logonToRoutrer()
 
 /*
 *******************************************************

@@ -6,6 +6,7 @@
 
 #ifndef UNIT_CONVERSION_H
 #define UNIT_CONVERSION_H
+
 #include <Arduino.h> // [builtin] PlatformIO
 
 float CtoF(float tempC);     // convert Celsius to Fahrenheit
