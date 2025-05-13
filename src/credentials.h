@@ -1,3 +1,13 @@
+//! @file credentials.h
+//! @brief Wi-Fi and Weather Underground credentials 
+//! @details This file contains the Wi-Fi and Weather Underground credentials
+//! @author Karl Berger
+//! @date 2025-05-13
+//! @note This file must reside in the same Arduino directory as the main sketch.
+
+#ifndef CREDENTIALS_H
+#define CREDENTIALS_H   
+
 #define FW_VERSION 1220 // Firmware version
 
 // Wi-Fi Credentials
@@ -68,3 +78,6 @@ IST  Asia/Kolkata
 #define DIGITAL_CLOCK true   // display digital clock (true/false)
 #define ANALOG_CLOCK false   // display analog clock (true/false)
 #define METRIC_DISPLAY false // weather display units
+
+#endif // CREDENTIALS_H
+// End of file
