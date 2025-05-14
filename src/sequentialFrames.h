@@ -19,7 +19,7 @@
 #include "credentials.h"
 #include "analogClock.h"
 #include "digitalClock.h"
-#include "weather.h"
+#include "weatherService.h"
 
 
 void updateFrame();

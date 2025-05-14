@@ -10,7 +10,7 @@
 #include <Arduino.h>
 #include <WiFiClient.h>	
 #include "credentials.h" // Wi-Fi and weather station credentials
-#include "weather.h"    // weather data	
+#include "weatherService.h"    // weather data	
 
 extern String unitStatus; // ThingSpeak status
 

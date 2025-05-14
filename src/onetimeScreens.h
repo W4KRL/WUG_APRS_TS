@@ -12,7 +12,7 @@
 #include "tftDisplay.h"
 #include "credentials.h"
 #include <ezTime.h>
-#include "weather.h"
+#include "weatherService.h"
 #include "colors.h"
 #include "timezone_globals.h"
 
