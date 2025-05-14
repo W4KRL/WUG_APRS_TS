@@ -45,6 +45,7 @@ extern weather wx; // Declaration for use in other files
 void getWXforecast();                                  // get forecasted weather
 void getWXcurrent();                                   // get current conditions
 void fetchDataAndParse(String getQuery, JsonDocument &filter, JsonDocument &doc);
+void updateWXcurrent();                            // update current conditions and post to thingSpeak
 
 #endif // WEATHER_SERVICE_H
 // End of file
