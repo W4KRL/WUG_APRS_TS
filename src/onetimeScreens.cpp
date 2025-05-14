@@ -1,11 +1,11 @@
 
 #include "onetimeScreens.h"
 
-TFT_eSPI tft;                               // instantiate fast display driver
-#include "Roboto_Bold_12.h"					// small font
-#include "Roboto_Bold_16.h"					// large font
-const GFXfont *SmallBold = &Roboto_Bold_12; // pointer to small font file
-const GFXfont *LargeBold = &Roboto_Bold_16; // pointer to large font file
+// TFT_eSPI tft;                               // instantiate fast display driver
+// #include "Roboto_Bold_12.h"					// small font
+// #include "Roboto_Bold_16.h"					// large font
+// const GFXfont *SmallBold = &Roboto_Bold_12; // pointer to small font file
+// const GFXfont *LargeBold = &Roboto_Bold_16; // pointer to large font file
 /*
 ******************************************************
 ******************* Splash Screen ********************

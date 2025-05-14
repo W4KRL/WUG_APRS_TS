@@ -72,6 +72,7 @@
 #include <TickTwo.h>           // [manager] v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
 #include "unitConversions.h" // unit conversion functions
 #include "debug.h"         // [manager] v1.0.0 Debug
+#include "tftDisplay.h" // TFT display functions
 
 //! For APRS bulletins
 #include <LittleFS.h> // [builtin]
@@ -212,8 +213,7 @@ void setup()
   Serial.begin(115200);                 // serial monitor
   Wire.begin(SDA, SCL);                 // define I2C pins
   sensorType = initSensor();            // detect & initialize indoor sensor
-  tft.init();                           // initialize display
-  tft.setRotation(FRAME_ORIENTATION);   // set display orientation
+  setupTFTDisplay();               // initialize TFT display
   pinMode(LED_BUILTIN, OUTPUT);         // built in LED
   digitalWrite(LED_BUILTIN, HIGH);      // turn off LED
   splashScreen();                       // stays on until logon is complete
