@@ -1,5 +1,7 @@
 #include "digitalClock.h"
 
+bool flipNumbers = false; // digital clock unpdate numerals
+
 /*
 ******************************************************
 ************** DIGITAL CLOCK FRAME *******************

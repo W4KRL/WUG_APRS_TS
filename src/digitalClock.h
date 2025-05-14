@@ -14,6 +14,8 @@
 #include "colors.h"
 #include "indoorSensor.h"
 
+extern bool flipNumbers; // digital clock unpdate numerals
+
 void digitalClockFrame(bool drawFrame);
 
 #endif // DIGITAL_CLOCK_H
