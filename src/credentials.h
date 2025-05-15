@@ -8,7 +8,7 @@
 #ifndef CREDENTIALS_H
 #define CREDENTIALS_H   
 
-#define FW_VERSION 1220 // Firmware version
+#define FW_VERSION 250515 // Firmware version
 
 // Wi-Fi Credentials
 //! Place all values in quotes " "
