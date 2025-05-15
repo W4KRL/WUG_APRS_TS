@@ -8,13 +8,14 @@
 #ifndef WEATHER_SERVICE_H
 #define WEATHER_SERVICE_H
 #include <Arduino.h>
-#include "credentials.h" // Wi-Fi and weather station credentials
+#include "credentials.h"       // Wi-Fi and weather station credentials
 #include <ESP8266HTTPClient.h> // [builtin] for http and https
 #include <WiFiClientSecure.h>  // [builtin] for https
 #include <ArduinoJson.h>       // [manager] v7.2 Benoit Blanchon https://arduinojson.org/
 #include "thingSpeakService.h" // ThingSpeak service header
 
-struct weather {
+struct weather
+{
   String forPhraseLong;     // long weather forecast 32 characters max
   String forPhraseShort;    // short weather forecast 12 characters max
   int forTempMax;           // forcasted high (°C)
@@ -42,10 +43,10 @@ struct weather {
 
 extern weather wx; // Declaration for use in other files
 
-void getWXforecast();                                  // get forecasted weather
-void getWXcurrent();                                   // get current conditions
+void getWXforecast(); // get forecasted weather
+void getWXcurrent();  // get current conditions
 void fetchDataAndParse(String getQuery, JsonDocument &filter, JsonDocument &doc);
-void updateWXcurrent();                            // update current conditions and post to thingSpeak
+void updateWXcurrent(); // update current conditions and post to thingSpeak
 
 #endif // WEATHER_SERVICE_H
 // End of file

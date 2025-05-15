@@ -58,10 +58,11 @@ void getWXcurrent()
   JsonDocument doc; // holds filtered json stream
 
   fetchDataAndParse(getQuery, filter, doc);
-  serializeJsonPretty(doc, Serial);
-  Serial.println();
+  #ifdef DEBUG
+    serializeJsonPretty(doc, Serial);
+    Serial.println();
+  #endif
 
-  //! parse the JsonDocument
   JsonObject observations_0 = doc["observations"][0];
   if (observations_0["lat"] != 0)
   {
