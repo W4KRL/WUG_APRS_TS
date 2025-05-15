@@ -3,9 +3,8 @@
 //! @details This file contains the functions for displaying sequential frames
 //!          on the TFT display. The frames include weather data, almanac data,
 //!          and clock data.
-//! @author Karl Berger	
+//! @author Karl Berger
 //! @date 2025-05-14
-
 
 #include "sequentialFrames.h"
 
@@ -116,43 +115,48 @@ void firstWXframe()
   int uvText = YELLOW;       // text color
   int uvBG = 0;              // background color
   int uvi = round(wx.obsUV); // round and convert to int
-  if (uvi < 0)
+
+  switch (uvi)
   {
-    // No report or not available
+  case -1: // No report or unavailable
     uvLabel = "N/A";
     uvBG = BLACK;
     uvText = WHITE;
-  }
-  else if (uvi < 3)
-  {
-    // No protection needed. Safely stay outside using minimal sun protection.
+    break;
+
+  case 0:
+  case 1:
+  case 2: // Low risk
     uvLabel = "Low";
     uvBG = GREEN;
     uvText = BLACK;
-  }
-  else if (uvi < 6)
-  {
-    // Protection needed. Seek shade during late morning through mid-afternoon. Use sunscreen.
+    break;
+
+  case 3:
+  case 4:
+  case 5: // Moderate risk
     uvLabel = "Moderate";
     uvBG = YELLOW;
     uvText = BLUE;
-  }
-  else if (uvi < 8)
-  {
-    // Protection needed. Seek shade during late morning through mid-afternoon. Use sunscreen.
+    break;
+
+  case 6:
+  case 7: // High risk
     uvLabel = "High";
     uvBG = OUTRAGEOUS_ORANGE;
-  }
-  else if (uvi < 11)
-  {
-    // Extra protection needed. Seek shade and wear protective clothing. Use sunscreen.
-    uvLabel = "Very High";
+    break;
+
+  case 8:
+  case 9:
+  case 10:                   // Very High risk
+    uvLabel = "Very Hi";     // to fit display
     uvBG = ALIZARIN_CRIMSON; // ORANGERED;
-  }
-  else
-  {
+    break;
+
+  default: // Extreme (uvi >= 11)
     uvLabel = "Extreme";
     uvBG = MAGENTA;
+    break;
   }
 
   // print labels, values, abd units
