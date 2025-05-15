@@ -14,6 +14,7 @@
 extern int *lineArray; // holds shuffled index to aphorisms
 extern int lineCount; // number of aphorisms in file
 
+void cleanupLineArray();
 void mountFS();
 void shuffleArray(int *array, int size);
 String pickAphorism(String aphorismFile, int *lineArray);

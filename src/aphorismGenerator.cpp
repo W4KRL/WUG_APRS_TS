@@ -9,6 +9,14 @@
 
 int* lineArray = nullptr; // holds shuffled index to aphorisms
 
+void cleanupLineArray()
+{
+  delete[] lineArray;
+  lineArray = nullptr;
+}
+
+int lineArraySize = 0;    // tracks the size of the lineArray
+
 /*
 *******************************************************
 *************** Aphorism File Functions ***************
@@ -23,11 +31,14 @@ void mountFS()
     return;
   }
   DEBUG_PRINTLN("FS mounted");
+
+  // Ensure previous memory is cleaned up before allocating new memory
+  cleanupLineArray();
+  DEBUG_PRINTLN("FS mounted");
   File file = LittleFS.open(APHORISM_FILE, "r");
   if (!file)
   {
     DEBUG_PRINTLN("FS failed to open file");
-    // return -1;  // returns -1 on failure
   }
   /************** Count Lines in File *******************/
   int lineCount = 0;
@@ -42,26 +53,31 @@ void mountFS()
   DEBUG_PRINT(lineCount);
   DEBUG_PRINTLN(" lines in " + (String)APHORISM_FILE);
 
-  // Create and populate the array with sequential integers from 0 to lineCount
-  lineArray = new int[lineCount];
+  // Create and shuffle the array directly during initialization
+  lineArraySize = lineCount;
+  lineArray = new int[lineArraySize];
+  randomSeed(analogRead(0)); // Seed with analog noise from pin 0 for better entropy
   for (int i = 0; i < lineCount; i++)
   {
-    lineArray[i] = i;
+    int j = random(0, i + 1); // Generate a random index
+    lineArray[i] = (j == i) ? i : lineArray[j]; // Place the new index or swap with an existing one
+    lineArray[j] = i;
   }
-  randomSeed(analogRead(A0)); // use noise from analog input to randomize seed
-  // shuffle the indices in lineArray[]
-  shuffleArray(lineArray, lineCount);
 } // mountFS()
 
 /***************** Shuffle Array **********************/
 void shuffleArray(int *array, int size)
 {
   // Fisher-Yates shuffle algorithm
-  // random() can be seeded with randomSeed() when called
+  // This algorithm iterates through the array from the last element to the second.
+  // For each element, it selects a random index (j) between 0 and the current index (i).
+  // The elements at indices i and j are then swapped, ensuring a uniform shuffle.
+  // random() is used to generate the random index, and it can be seeded with randomSeed() for better randomness.
+
   for (int i = size - 1; i > 0; i--)
   {
-    int j = random(0, i + 1);
-    // Swap array[i] with the element at random index
+    int j = random(0, i + 1); // Generate a random index between 0 and i (inclusive)
+    // Swap array[i] with the element at random index j
     int temp = array[i];
     array[i] = array[j];
     array[j] = temp;
@@ -69,47 +85,45 @@ void shuffleArray(int *array, int size)
 } // shuffleArray()
 
 /*************** pickAphorism *******************/
-String pickAphorism(String fileName, int *lineArray)
-{
-  // 12/19/2024
-  static int j = 0; // Static variable to retain value between function calls
+String pickAphorism(String fileName, int *lineArray) {
+    static int j = 0; // Static variable to retain value between function calls
 
-  while (true)
-  {
-    File file = LittleFS.open(fileName.c_str(), "r");
-    if (!file)
-    {
-      return ""; // Return nothing on fail
+    if (lineArray == nullptr) {
+        return ""; // Return an empty string if lineArray is not initialized
     }
 
-    String line = "";
-    int targetLine = lineArray[j];
-    int currentLine = 0;
+    for (int attempt = 0; attempt < 10; attempt++) { // Limit attempts to prevent infinite loop
+        File file = LittleFS.open(fileName.c_str(), "r");
+        if (!file) {
+            DEBUG_PRINTLN("FS failed to open file");
+            return ""; // Return empty string on failure
+        }
 
-    // Search for the target line
-    while (file.available())
-    {
-      line = file.readStringUntil('\n');
-      if (currentLine == targetLine)
-      {
-        break;
-      }
-      currentLine++;
+        String aphorism = "";
+        int targetLine = lineArray[j];
+        int currentLine = 0;
+
+        // Search for the target line
+        while (file.available()) {
+            String line = file.readStringUntil('\n');
+            if (currentLine == targetLine) {
+                aphorism = line;
+                break;
+            }
+            currentLine++;
+        }
+
+        file.close(); // Ensure file is closed
+
+        if (currentLine == targetLine) {
+            j++; // Increment j for the next call
+            if (lineArray[j] == -1) { // Assuming the end of the array is marked with -1
+                j = 0; // Reset j if it reaches the end of the array
+            }
+            return aphorism; // Return found aphorism
+        }
     }
 
-    file.close();
-
-    if (currentLine == targetLine)
-    {
-      j++; // Increment j for the next call
-      if (lineArray[j] == -1)
-      {        // Assuming the end of the array is marked with -1
-        j = 0; // Reset j if it reaches the end of the array
-      }
-      return line;
-    }
-
-    // If the line is not found, reset j and try again
-    j = 0;
-  }
-} // pickAphorism()
+    j = 0; // Reset j if no valid aphorism is found
+    return ""; // Return empty string if unsuccessful
+}
