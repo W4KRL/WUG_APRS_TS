@@ -16,7 +16,7 @@
 #include "unitConversions.h"
 #include "credentials.h"
 
-extern bool moveHands;   // analog clock update hand
+extern bool allowHandMovement;   // analog clock update hand
 
 void analogClockFrame(bool drawFrame);
 

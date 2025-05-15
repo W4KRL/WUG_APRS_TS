@@ -28,8 +28,8 @@ void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkCol
 */
 void updateFrame()
 {
-  moveHands = false;   // supress hand movement until analog clock is displayed
-  flipNumbers = false; // supress numeral change unless digital clock is displayed
+  allowHandMovement = false; // supress hand movement until analog clock is displayed
+  allowNumberFlip = false;  // supress numeral change unless digital clock is displayed
 
   int maxFrames = 3; // number of display frames w/o clocks
   if (ANALOG_CLOCK)
@@ -61,19 +61,19 @@ void updateFrame()
     break;
   case 4: // could be digital clock if not analog
     if (ANALOG_CLOCK)
-    {                         // process analog clock unless not selected
-      analogClockFrame(true); // draw clock frame
-      moveHands = true;       // enable update on secondsChanged() in loop()
+    {                           // process analog clock unless not selected
+      analogClockFrame(true);   // draw clock frame
+      allowHandMovement = true; // enable update on secondsChanged() in loop()
     }
     else
     {                          // otherwise process digital clock
       digitalClockFrame(true); // draw clock frame
-      flipNumbers = true;      // enable update on secondsChanged() in loop()
+      allowNumberFlip = true; // enable update on secondsChanged() in loop()
     } //
     break;                   //
   case 5:                    // definitely digital
     digitalClockFrame(true); // draw clock frame
-    flipNumbers = true;      // enable update on secondsChanged() in loop()
+    allowNumberFlip = true; // enable update on secondsChanged() in loop()
     break;
   default:
     break;
@@ -362,10 +362,10 @@ float moonPhase()
   // https://en.wikipedia.org/wiki/Lunar_phase
   unsigned long unixTime = now();                         // UTC unix time
   float lunarDays = 29.53059;                             // average days between new moons (synodic)
-  unsigned int lunarSecs = lunarDays * 24 * 60 * 60;      // seconds between new moons
-  unsigned int new2000 = 947182440;                       // new moon January 6, 2000 18:14 UTC
-  unsigned int totalSecs = unixTime - new2000;            // seconds since January 2000 new moon
-  unsigned int currentSecs = fmod(totalSecs, lunarSecs);  // seconds since most recent new moon
+  unsigned long lunarSecs = lunarDays * 24 * 60 * 60;     // seconds between new moons
+  unsigned long new2000 = 947182440;                      // new moon January 6, 2000 18:14 UTC
+  unsigned long totalSecs = unixTime - new2000;           // seconds since January 2000 new moon
+  unsigned long currentSecs = fmod(totalSecs, lunarSecs); // seconds since most recent new moon
   float fraction = (float)currentSecs / (float)lunarSecs; // fraction of lunation 0=new, 0.25=1Q, 0.5 is full, 1=new
 
   return fraction;
@@ -482,6 +482,9 @@ void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkCol
       xp = xc - x0e;
       tft.drawFastHLine(xl, yc - y, xp - xl, liteColor);
       tft.drawFastHLine(xl, yc + y, xp - xl, liteColor);
+      break;
+    default: // handle unexpected values
+      // Optionally log or handle the error
       break;
     }
     // draw abutting lines above and below x-axis

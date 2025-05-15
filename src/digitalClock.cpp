@@ -1,6 +1,6 @@
 #include "digitalClock.h"
 
-bool flipNumbers = false; // digital clock unpdate numerals
+bool allowNumberFlip = false; // digital clock unpdate numerals
 
 /*
 ******************************************************

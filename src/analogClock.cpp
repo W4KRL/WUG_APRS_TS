@@ -7,7 +7,7 @@
 
 #include "analogClock.h"
 
-bool moveHands = false;   // analog clock update hand
+bool allowHandMovement = false;   // analog clock update hand
 
 /*
 ******************************************************

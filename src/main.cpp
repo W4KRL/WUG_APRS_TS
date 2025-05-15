@@ -152,11 +152,11 @@ void loop()
   if (myTZ.second() != oldsec)
   {
     oldsec = myTZ.second();
-    if (flipNumbers)
+    if (allowNumberFlip)
     {                           // user has selected the digital clock
       digitalClockFrame(false); // do not redraw frame
     }
-    if (moveHands)
+    if (allowHandMovement)
     {                          // user has selected the analog clock
       analogClockFrame(false); // do not redraw frame
     }
