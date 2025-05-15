@@ -58,16 +58,14 @@
 ******************** INCLUDES ************************
 ******************************************************
 */
-
-//! For general sketch
 #include <Arduino.h>           // [builtin] PlatformIO
+#include <TickTwo.h>           // v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
 #include "wifiConnection.h"    // Wi-Fi connection functions
 #include "timezone_globals.h"  // timezone object
 #include "indoorSensor.h"      // indoor sensor functions
 #include "onetimeScreens.h"    // splash screen
-#include <TickTwo.h>           // [manager] v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
-#include "unitConversions.h"   // unit conversion functions
-#include "debug.h"             // [manager] v1.0.0 Debug
+#include "unitConversions.h"   // unit conversions
+#include "debug.h"             // dewbug macro
 #include "tftDisplay.h"        // TFT display functions
 #include "digitalClock.h"      // digital clock functions
 #include "analogClock.h"       // analog clock functions
@@ -116,9 +114,9 @@ TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
 */
 void setup()
 {
-  Serial.begin(115200);            // serial monitor
-  Wire.begin(SDA, SCL);            // define I2C pins
-  sensorType = initSensor();       // detect & initialize indoor sensor
+  Serial.begin(115200); // serial monitor
+
+  initSensor();                    // initialize indoor sensor
   setupTFTDisplay();               // initialize TFT display
   pinMode(LED_BUILTIN, OUTPUT);    // built in LED
   digitalWrite(LED_BUILTIN, HIGH); // turn off LED
@@ -150,11 +148,10 @@ void loop()
 {
   events(); // ezTime events including autoconnect to NTP server
 
-  //! ezTime secondChanged() is unreliable
-  static int oldsec = 0;
+  static int oldsec = -1;
   if (myTZ.second() != oldsec)
   {
-    oldsec = second();
+    oldsec = myTZ.second();
     if (flipNumbers)
     {                           // user has selected the digital clock
       digitalClockFrame(false); // do not redraw frame
@@ -164,18 +161,6 @@ void loop()
       analogClockFrame(false); // do not redraw frame
     }
   }
-
-  // static int lastHour = -1;
-  // if (lastHour != myTZ.hour()) {
-  //   lastHour = myTZ.hour();
-  //   if (myTZ.minute() == 0) {
-  //     bulletinText = pickAphorism(APHORISM_FILE, lineArray);
-  //     APRSsendBulletin(bulletinText, "Q");
-  //     unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
-  //     postToThingSpeak();
-  //     unitStatus = "";
-  //   }
-  // }
 
   //! process APRS bulletins
   //? Check if it is 0800 EST and the morning bulletin has not been sent

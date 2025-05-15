@@ -76,7 +76,7 @@ void analogClockFrame(bool drawFrame)
 
     //! print indoor temperature & humidity
     // show only if there is a sensor and no digital clock
-    if (!DIGITAL_CLOCK && sensorType != SENSOR_NONE)
+    if (!DIGITAL_CLOCK && indoorSensor == true)
     {
       readSensor();
       tft.setTextColor(C_ANALOG_INDOOR, C_ANALOG_DIAL_BG); // print over dial
@@ -89,7 +89,7 @@ void analogClockFrame(bool drawFrame)
 
   //! update hands. Process second hand, minute hand, hour hand in this order
   //? **** Process second hand ****
-  deg = second() * 6;  // each second advances 6 degrees
+  deg = myTZ.second() * 6;  // each second advances 6 degrees
   rad = DEGtoRAD(deg); // Convert degrees to radians
   static float oldSrad = rad;
 

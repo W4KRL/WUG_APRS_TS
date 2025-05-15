@@ -37,7 +37,7 @@ void digitalClockFrame(bool drawFrame)
     tft.drawString(myTZ.dateTime("H~:i~:"), lc, tl + 3 * (h + lm));
 
     // indoor temperature & humidity
-    if (sensorType != SENSOR_NONE)
+    if (indoorSensor == true)
     {
       tft.setTextColor(C_DIGITAL_INDOOR);
       tft.drawString("Indoor", SCREEN_W2, tl + 80);

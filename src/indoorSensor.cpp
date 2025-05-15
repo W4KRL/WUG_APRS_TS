@@ -1,30 +1,35 @@
 //! @file indoorSensor.cpp
-//! @brief Indoor sensor functions	
+//! @brief Indoor sensor functions
 //! @details This file contains the functions to initialize and read the indoor sensor.
-//! @author Karl Berger	
-//! @date 2025-05-13
+//! @author Karl Berger
+//! @date 2025-05-15
 
 #include "indoorSensor.h"
 
-Adafruit_AHTX0 aht; // Define here
-int sensorType = SENSOR_NONE; // Define here
-struct sensorTH indoor; // Define here
+#include <Arduino.h>        // PlatformIO
+#include <Wire.h>           // I2C library
+#include <Adafruit_AHTX0.h> // Adafruit sensor library
 
-int initSensor()
+Adafruit_AHTX0 aht; // Create sensor object
+
+// Define global variables
+bool indoorSensor = false;    // Default to false = no sesnor found
+SensorTH indoor = {0.0, 0.0}; // initialize global sensor variable
+
+void initSensor()
 {
-  // detect sensor type and initialize
-  int type = SENSOR_NONE;
-  if (aht.begin()) // found AHT10 sensor if true
-  {
-    type = SENSOR_AHT10;
-  }
-  return type;
-} // initSensor()
+  Wire.begin(SDA, SCL); // Define I2C pins
+  // Detect sensor and initialize
+  indoorSensor = aht.begin(); // True if AHT10 sensor is found
+}
 
 void readSensor()
 {
-  sensors_event_t humidity, temp;
-  aht.getEvent(&humidity, &temp);
-  indoor.tempC = temp.temperature;
-  indoor.humid = humidity.relative_humidity;
-} // readSensor()
+  if (indoorSensor)
+  {
+    sensors_event_t humidity, temp;
+    aht.getEvent(&humidity, &temp);
+    indoor.tempC = temp.temperature;
+    indoor.humid = humidity.relative_humidity;
+  }
+}
