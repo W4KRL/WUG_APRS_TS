@@ -13,7 +13,6 @@
 #include "weatherService.h"	 // weather data
 #include "unitConversions.h" // unit conversion functions
 
-// extern int *lineArray;		// holds shuffled index to aphorisms
 extern int lineCount;		// number of aphorisms in file
 extern bool amBulletinSent; // APRS morning bulletin
 extern bool pmBulletinSent; // APRS evening bulletin

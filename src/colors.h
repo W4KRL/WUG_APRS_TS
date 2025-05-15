@@ -4,14 +4,10 @@
 //!          TFT display. The colors are defined in RGB565 format.
 //! @author Karl Berger
 //! @date 2025-05-13
-//! @note This file must reside in the same Arduino directory as the remote display sketch.
 //! @note This file is included in the main sketch and is used to
 //!       define the colors for the frames and text on the display.
 //! @note The colors are defined in RGB565 format, which is a 16-bit color format.
 //!       The colors are defined using the 16-bit hex values.
-//! @note The colors are similar to the resistor color code.
-//! @note The colors are defined using the 16-bit hex values.
-//! @note The colors are defined using the RGB565 format.
 
 #ifndef COLORS_H
 #define COLORS_H
