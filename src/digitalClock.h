@@ -8,11 +8,6 @@
 
 #ifndef DIGITAL_CLOCK_H
 #define DIGITAL_CLOCK_H
-#include <Arduino.h>
-#include "tftDisplay.h"	
-#include "timezone_globals.h"
-#include "colors.h"
-#include "indoorSensor.h"
 
 extern bool allowNumberFlip; // digital clock unpdate numerals
 

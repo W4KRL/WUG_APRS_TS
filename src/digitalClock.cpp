@@ -1,5 +1,11 @@
 #include "digitalClock.h"
 
+#include <Arduino.h>
+#include "tftDisplay.h"	
+#include "timezone_globals.h"
+#include "colors.h"
+#include "indoorSensor.h"
+
 bool allowNumberFlip = false; // digital clock unpdate numerals
 
 /*
