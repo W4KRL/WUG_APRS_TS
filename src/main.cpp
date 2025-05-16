@@ -59,22 +59,22 @@
 ******************************************************
 */
 #include <Arduino.h>           // [builtin] PlatformIO
-#include <TickTwo.h>           // v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
-#include "wifiConnection.h"    // Wi-Fi connection functions
-#include "timezone_globals.h"  // timezone object
-#include "indoorSensor.h"      // indoor sensor functions
-#include "onetimeScreens.h"    // splash screen
-#include "unitConversions.h"   // unit conversions
-#include "wug_debug.h"             // debug print macro
-#include "tftDisplay.h"        // TFT display functions
-#include "digitalClock.h"      // digital clock functions
 #include "analogClock.h"       // analog clock functions
-#include "sequentialFrames.h"  // sequential frames functions
-#include "thingSpeakService.h" // ThingSpeak functions
-#include "aprsService.h"       // APRS functions
 #include "aphorismGenerator.h" // aphorism functions
-#include "weatherService.h"    // weather data
+#include "aprsService.h"       // APRS functions
 #include "credentials.h"       // account information
+#include "digitalClock.h"      // digital clock display
+#include "indoorSensor.h"      // indoor sensor functions
+#include "onetimeScreens.h"    // splash screen and information screens
+#include "sequentialFrames.h"  // sequential weather and almanac frames
+#include "tftDisplay.h"        // TFT display functions
+#include "thingSpeakService.h" // ThingSpeak posting
+#include "timezone_globals.h"  // timezone object
+#include "unitConversions.h"   // unit conversions
+#include "weatherService.h"    // weather data from Weather Underground API
+#include "wifiConnection.h"    // Wi-Fi connection
+#include "wug_debug.h"         // debug print macro
+#include <TickTwo.h>           // v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
 
 /*
 ******************************************************
@@ -120,8 +120,6 @@ void setup()
 
   initSensor();                    // initialize indoor sensor
   setupTFTDisplay();               // initialize TFT display
-  pinMode(LED_BUILTIN, OUTPUT);    // built in LED
-  digitalWrite(LED_BUILTIN, HIGH); // turn off LED
   splashScreen();                  // stays on until logon is complete
   logonToRouter();                 // connect to WiFi
   getWXcurrent();                  // find latitude & longitude for your weather station
@@ -163,14 +161,6 @@ void loop()
       analogClockFrame(false); // do not redraw frame
     }
   }
-
-//! TEST
-static unsigned long lastTime = 0;
-if (millis() - lastTime >= 5000){
-  Serial.print("Main: ");
-  Serial.println(pickAphorism(APHORISM_FILE, lineArray));
-  lastTime = millis();
-}
 
   //! process APRS bulletins
   //? Check if it is 0800 EST and the morning bulletin has not been sent
