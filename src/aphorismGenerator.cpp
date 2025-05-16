@@ -1,13 +1,17 @@
 //! @file aphorismGenerator.cpp
 //! @brief Aphorism generator implementation
-//! @details This file contains the functions for generating aphorisms from a file.	
+//! @details This file contains the functions for generating aphorisms from a file.
 //!          The aphorisms are stored in a file on the LittleFS filesystem.
 //! @author Karl Berger
-//! @date 2025-05-14
+//! @date 2025-05-16
 
 #include "aphorismGenerator.h"
 
-int* lineArray = nullptr; // holds shuffled index to aphorisms
+#include <LittleFS.h>    // [builtin]
+#include "credentials.h" // Wi-Fi and weather station credentials
+#include "wug_debug.h"       // for debug print
+
+int *lineArray = nullptr; // holds shuffled index to aphorisms
 
 void cleanupLineArray()
 {
@@ -15,7 +19,7 @@ void cleanupLineArray()
   lineArray = nullptr;
 }
 
-int lineArraySize = 0;    // tracks the size of the lineArray
+int lineArraySize = 0; // tracks the size of the lineArray
 
 /*
 *******************************************************
@@ -33,8 +37,7 @@ void mountFS()
   DEBUG_PRINTLN("FS mounted");
 
   // Ensure previous memory is cleaned up before allocating new memory
-  cleanupLineArray();
-  DEBUG_PRINTLN("FS mounted");
+  // cleanupLineArray();
   File file = LittleFS.open(APHORISM_FILE, "r");
   if (!file)
   {
@@ -59,7 +62,7 @@ void mountFS()
   randomSeed(analogRead(0)); // Seed with analog noise from pin 0 for better entropy
   for (int i = 0; i < lineCount; i++)
   {
-    int j = random(0, i + 1); // Generate a random index
+    int j = random(0, i + 1);                   // Generate a random index
     lineArray[i] = (j == i) ? i : lineArray[j]; // Place the new index or swap with an existing one
     lineArray[j] = i;
   }
@@ -85,45 +88,53 @@ void shuffleArray(int *array, int size)
 } // shuffleArray()
 
 /*************** pickAphorism *******************/
-String pickAphorism(String fileName, int *lineArray) {
-    static int j = 0; // Static variable to retain value between function calls
+String pickAphorism(String fileName, int *lineArray)
+{
+  static int j = 0; // Static variable to retain value between function calls
 
-    if (lineArray == nullptr) {
-        return ""; // Return an empty string if lineArray is not initialized
+  if (lineArray == nullptr)
+  {
+    return ""; // Return an empty string if lineArray is not initialized
+  }
+
+  for (int attempt = 0; attempt < 10; attempt++)
+  { // Limit attempts to prevent infinite loop
+    File file = LittleFS.open(fileName.c_str(), "r");
+    if (!file)
+    {
+      DEBUG_PRINTLN("FS failed to open file");
+      return ""; // Return empty string on failure
     }
 
-    for (int attempt = 0; attempt < 10; attempt++) { // Limit attempts to prevent infinite loop
-        File file = LittleFS.open(fileName.c_str(), "r");
-        if (!file) {
-            DEBUG_PRINTLN("FS failed to open file");
-            return ""; // Return empty string on failure
-        }
+    String aphorism = "";
+    int targetLine = lineArray[j];
+    int currentLine = 0;
 
-        String aphorism = "";
-        int targetLine = lineArray[j];
-        int currentLine = 0;
-
-        // Search for the target line
-        while (file.available()) {
-            String line = file.readStringUntil('\n');
-            if (currentLine == targetLine) {
-                aphorism = line;
-                break;
-            }
-            currentLine++;
-        }
-
-        file.close(); // Ensure file is closed
-
-        if (currentLine == targetLine) {
-            j++; // Increment j for the next call
-            if (lineArray[j] == -1) { // Assuming the end of the array is marked with -1
-                j = 0; // Reset j if it reaches the end of the array
-            }
-            return aphorism; // Return found aphorism
-        }
+    // Search for the target line
+    while (file.available())
+    {
+      String line = file.readStringUntil('\n');
+      if (currentLine == targetLine)
+      {
+        aphorism = line;
+        break;
+      }
+      currentLine++;
     }
 
-    j = 0; // Reset j if no valid aphorism is found
-    return ""; // Return empty string if unsuccessful
+    file.close(); // Ensure file is closed
+
+    if (currentLine == targetLine)
+    {
+      j++; // Increment j for the next call
+      if (lineArray[j] == -1)
+      {        // Assuming the end of the array is marked with -1
+        j = 0; // Reset j if it reaches the end of the array
+      }
+      return aphorism; // Return found aphorism
+    }
+  }
+
+  j = 0;     // Reset j if no valid aphorism is found
+  return ""; // Return empty string if unsuccessful
 }
