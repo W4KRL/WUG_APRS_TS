@@ -6,6 +6,12 @@
 
 #include "aprsService.h"
 
+#include "credentials.h"	 // Wi-Fi and weather station credentials
+#include <WiFiClient.h>		 // APRS connection
+#include "weatherService.h"	 // weather data
+#include "unitConversions.h" // unit conversion functions
+#include "debug.h"			 // debug print
+
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!
 // for list of tier 2 servers: http://www.aprs2.net/

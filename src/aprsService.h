@@ -8,10 +8,10 @@
 #define APRS_SERVICE_H
 
 #include <Arduino.h>
-#include "credentials.h" // Wi-Fi and weather station credentials
-#include <WiFiClient.h>
-#include "weatherService.h"	 // weather data
-#include "unitConversions.h" // unit conversion functions
+// #include "credentials.h" // Wi-Fi and weather station credentials
+// #include <WiFiClient.h>
+// #include "weatherService.h"	 // weather data
+// #include "unitConversions.h" // unit conversion functions
 
 extern int lineCount;		// number of aphorisms in file
 extern bool amBulletinSent; // APRS morning bulletin
