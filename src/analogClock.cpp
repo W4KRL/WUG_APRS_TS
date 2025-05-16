@@ -7,6 +7,14 @@
 
 #include "analogClock.h"
 
+#include <Arduino.h>
+#include "tftDisplay.h"	
+#include "timezone_globals.h"
+#include "colors.h"
+#include "indoorSensor.h"
+#include "unitConversions.h"
+#include "credentials.h"
+
 bool allowHandMovement = false;   // analog clock update hand
 
 /*

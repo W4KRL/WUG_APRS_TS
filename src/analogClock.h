@@ -8,14 +8,6 @@
 #ifndef ANALOG_CLOCK_H
 #define ANALOG_CLOCK_H
 
-#include <Arduino.h>
-#include "tftDisplay.h"	
-#include "timezone_globals.h"
-#include "colors.h"
-#include "indoorSensor.h"
-#include "unitConversions.h"
-#include "credentials.h"
-
 extern bool allowHandMovement;   // analog clock update hand
 
 void analogClockFrame(bool drawFrame);
