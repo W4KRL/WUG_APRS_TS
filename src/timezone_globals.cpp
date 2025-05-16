@@ -1,6 +1,9 @@
-#include <Arduino.h>
-#include <ezTime.h>
+//! @file timezone_globals.cpp
+//!	2025-05-16
+
 #include "timezone_globals.h"
+
+#include "credentials.h"
 
 Timezone myTZ; // This is the single definition
 
