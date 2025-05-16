@@ -3,16 +3,13 @@
 //! @details This file contains the functions for fetching weather data from Weather Underground
 //!          and posting it to ThingSpeak.
 //! @author Karl Berger
-//! @date 2025-05-14
+//! @date 2025-05-16
 
 #ifndef WEATHER_SERVICE_H
 #define WEATHER_SERVICE_H
+
 #include <Arduino.h>
-#include "credentials.h"       // Wi-Fi and weather station credentials
-#include <ESP8266HTTPClient.h> // [builtin] for http and https
-#include <WiFiClientSecure.h>  // [builtin] for https
 #include <ArduinoJson.h>       // [manager] v7.2 Benoit Blanchon https://arduinojson.org/
-#include "thingSpeakService.h" // ThingSpeak service header
 
 struct weather
 {

@@ -2,13 +2,18 @@
 //! @brief ThingSpeak service implementation
 //! @details This file contains the functions for posting weather data to ThingSpeak.
 //! @author Karl Berger
-//! @date 2025-05-14
+//! @date 2025-05-16
 
 #include "thingSpeakService.h"
 
+#include <WiFiClient.h>     // ThingSpeak connection
+#include "credentials.h"    // Wi-Fi and weather station credentials
+#include "weatherService.h" // weather data
+#include "debug.h"          // debug print
+
 //! ************** THINGSPEAK ************************
 #define THINGSPEAK_SERVER "api.thingspeak.com" // ThingSpeak Server
-String unitStatus = "";                        // ThingSpeak status
+String unitStatus = "";                        // ThingSpeak status global
 
 /*
 *******************************************************

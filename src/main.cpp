@@ -73,6 +73,7 @@
 #include "thingSpeakService.h" // ThingSpeak functions
 #include "aprsService.h"       // APRS functions
 #include "aphorismGenerator.h" // aphorism functions
+#include "weatherService.h"    // weather data
 
 /*
 ******************************************************
