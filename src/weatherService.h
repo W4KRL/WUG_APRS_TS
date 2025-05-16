@@ -8,8 +8,8 @@
 #ifndef WEATHER_SERVICE_H
 #define WEATHER_SERVICE_H
 
-#include <Arduino.h>
-#include <ArduinoJson.h>       // [manager] v7.2 Benoit Blanchon https://arduinojson.org/
+#include <Arduino.h>     // for struct
+#include <ArduinoJson.h> // for fetchData prototype v7.2 Benoit Blanchon https://arduinojson.org/
 
 struct weather
 {
