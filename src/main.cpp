@@ -16,7 +16,7 @@
 // TODO add APRS bulletin for sunrise/sunset
 // TODO test WUG API responses for absence. Do not update WX data if response missing
 
-#define DEBUG //! uncomment this line for serial debug output
+#define WUG_DEBUG //! uncomment this line for serial debug output
 
 // Displays local weather from VEVOR 7-in-1 Weather Station
 // through Weather Underground PWS account
@@ -65,7 +65,7 @@
 #include "indoorSensor.h"      // indoor sensor functions
 #include "onetimeScreens.h"    // splash screen
 #include "unitConversions.h"   // unit conversions
-#include "debug.h"             // dewbug macro
+#include "wug_debug.h"             // debug print macro
 #include "tftDisplay.h"        // TFT display functions
 #include "digitalClock.h"      // digital clock functions
 #include "analogClock.h"       // analog clock functions
@@ -74,6 +74,7 @@
 #include "aprsService.h"       // APRS functions
 #include "aphorismGenerator.h" // aphorism functions
 #include "weatherService.h"    // weather data
+#include "credentials.h"       // account information
 
 /*
 ******************************************************
@@ -162,6 +163,14 @@ void loop()
       analogClockFrame(false); // do not redraw frame
     }
   }
+
+//! TEST
+static unsigned long lastTime = 0;
+if (millis() - lastTime >= 5000){
+  Serial.print("Main: ");
+  Serial.println(pickAphorism(APHORISM_FILE, lineArray));
+  lastTime = millis();
+}
 
   //! process APRS bulletins
   //? Check if it is 0800 EST and the morning bulletin has not been sent

@@ -6,6 +6,10 @@
 
 #include <Arduino.h>	
 
+#ifdef DEBUG
+#undef DEBUG  // Prevent conflicts with other libraries
+#endif
+
 #include <ezTime.h> // for Timezone
 
 extern Timezone myTZ;

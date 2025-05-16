@@ -12,6 +12,7 @@
 #include <WiFiClientSecure.h>  // [builtin] for https
 #include <ArduinoJson.h>       // [manager] v7.2 Benoit Blanchon https://arduinojson.org/
 #include "thingSpeakService.h" // ThingSpeak service header
+#include "wug_debug.h"         // debug print
 
 weather wx; // global weather object
 
@@ -64,10 +65,10 @@ void getWXcurrent()
   JsonDocument doc; // holds filtered json stream
 
   fetchDataAndParse(getQuery, filter, doc);
-  #ifdef DEBUG
-    serializeJsonPretty(doc, Serial);
-    Serial.println();
-  #endif
+  // #ifdef DEBUG
+  //   serializeJsonPretty(doc, Serial);
+  //   Serial.println();
+  // #endif
 
   JsonObject observations_0 = doc["observations"][0];
   if (observations_0["lat"] != 0)
@@ -213,4 +214,3 @@ void fetchDataAndParse(String getQuery, JsonDocument &filter, JsonDocument &doc)
     DEBUG_PRINTLN("https: can't connect");
   }
 } // fetchDataAndParse()
-

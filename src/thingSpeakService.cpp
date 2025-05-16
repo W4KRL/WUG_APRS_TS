@@ -9,7 +9,7 @@
 #include <WiFiClient.h>     // ThingSpeak connection
 #include "credentials.h"    // Wi-Fi and weather station credentials
 #include "weatherService.h" // weather data
-#include "debug.h"          // debug print
+#include "wug_debug.h"          // debug print
 
 //! ************** THINGSPEAK ************************
 #define THINGSPEAK_SERVER "api.thingspeak.com" // ThingSpeak Server

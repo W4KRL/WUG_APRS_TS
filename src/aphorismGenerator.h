@@ -3,13 +3,12 @@
 //! @details This file contains the functions for generating aphorisms from a file.	
 //!          The aphorisms are stored in a file on the LittleFS filesystem.
 //! @author Karl Berger
-//! @date 2025-05-14
+//! @date 2025-05-16
+
 #ifndef APHORISM_GENERATOR_H
 #define APHORISM_GENERATOR_H
 
-#include <Arduino.h>
-#include <LittleFS.h> // [builtin]
-#include "credentials.h" // Wi-Fi and weather station credentials
+#include <Arduino.h> // for String
 
 extern int *lineArray; // holds shuffled index to aphorisms
 extern int lineCount; // number of aphorisms in file

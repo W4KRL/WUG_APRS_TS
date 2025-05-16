@@ -1,4 +1,4 @@
-//!	@file debug.h
+//!	@file wug_debug.h
 //!	@brief Debugging functions	
 //!	@details This file contains the functions for debugging and
 //!          displaying messages on the serial monitor.
@@ -8,10 +8,15 @@
 #ifndef DEBUG_H
 #define DEBUG_H	
 
-#include <Arduino.h> // [builtin] PlatformIO
+#include <Arduino.h>  // Required for String
+
+#ifdef DEBUG
+#undef DEBUG  // Prevent conflicts with other libraries
+#endif
+
 
 //! Debug print macro
-#ifdef DEBUG
+#ifdef WUG_DEBUG
 #define DEBUG_PRINT(x) Serial.print(x)
 #define DEBUG_PRINTLN(x) Serial.println(x)
 #else
@@ -19,5 +24,5 @@
 #define DEBUG_PRINTLN(x)
 #endif
 
-#endif // DEBUG_H
+#endif
 // End of file

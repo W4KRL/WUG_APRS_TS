@@ -10,7 +10,7 @@
 #include <WiFiClient.h>		 // APRS connection
 #include "weatherService.h"	 // weather data
 #include "unitConversions.h" // unit conversion functions
-#include "debug.h"			 // debug print
+#include "wug_debug.h"			 // debug print
 
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!

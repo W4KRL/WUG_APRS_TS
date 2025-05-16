@@ -9,7 +9,7 @@
 
 #include <ESP8266WiFi.h> // [manager] v2.0.0 Wi-Fi
 #include "credentials.h"
-#include "debug.h"
+#include "wug_debug.h"
 
 void logonToRouter()
 {
