@@ -3,9 +3,13 @@
 //! @details The function logonToRouter() connects the ESP8266 to the specified Wi-Fi network.
 //! @details The function uses the WiFi library to connect to the network and prints the IP address once connected.
 //! @author Karl Berger
-//! @date 2025-05-13
+//! @date 2025-05-16
 
 #include "wifiConnection.h"
+
+#include <ESP8266WiFi.h> // [manager] v2.0.0 Wi-Fi
+#include "credentials.h"
+#include "debug.h"
 
 void logonToRouter()
 {
