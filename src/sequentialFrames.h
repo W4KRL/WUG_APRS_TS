@@ -4,23 +4,11 @@
 //!          on the TFT display. The frames include weather data, almanac data,
 //!          and clock data.
 //! @author Karl Berger
-//! @date 2025-05-14
+//! @date 2025-05-16
 
 
 #ifndef SEQUENTIAL_FRAMES_H
 #define SEQUENTIAL_FRAMES_H
-
-#include <Arduino.h>
-#include "tftDisplay.h"	
-#include "timezone_globals.h"
-#include "colors.h"
-#include "indoorSensor.h"
-#include "unitConversions.h"
-#include "credentials.h"
-#include "analogClock.h"
-#include "digitalClock.h"
-#include "weatherService.h"
-
 
 void updateFrame();
 void drawFramePanels(int top_background, int bottom_background);
