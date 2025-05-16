@@ -13,17 +13,20 @@
 
 void logonToRouter()
 {
-	WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // begin WiFi
-	WiFi.mode(WIFI_STA);				  // explicitly set mode, esp defaults to STA+AP
-	WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // begin WiFi
-	WiFi.mode(WIFI_STA);				  // explicitly set mode, esp defaults to STA+AP
+	pinMode(LED_BUILTIN, OUTPUT); // Built-in LED
+
+	WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Begin WiFi
+	WiFi.mode(WIFI_STA);				  // Explicitly set mode, ESP defaults to STA+AP
+
 	DEBUG_PRINT("\n\nConnecting to " + (String)WIFI_SSID);
 
 	while (WiFi.status() != WL_CONNECTED)
-	{ // Wait for the Wi-Fi to connect
+	{ // Wait for Wi-Fi to connect
 		delay(500);
+		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // Toggle LED
 		DEBUG_PRINT('.');
 	}
+	digitalWrite(LED_BUILTIN, HIGH); // Turn off LED
 
 	DEBUG_PRINT("\nWi-Fi connected. IP address: ");
 	DEBUG_PRINTLN(WiFi.localIP()); // Send the IP address of the ESP8266 to the computer
