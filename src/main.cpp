@@ -118,17 +118,17 @@ void setup()
 {
   Serial.begin(115200); // serial monitor
 
-  initSensor();                    // initialize indoor sensor
-  setupTFTDisplay();               // initialize TFT display
-  splashScreen();                  // stays on until logon is complete
-  logonToRouter();                 // connect to WiFi
-  getWXcurrent();                  // find latitude & longitude for your weather station
-  setTimeZone();                   // set timezone
-  mountFS();                       // mount LittleFS and prepare APRS bulletin file
-  dataScreen();                    // show configuration data
-  getWXforecast();                 // initialize weather data - needs lat/lon from getWXcurrent
-  APRSsendWX();                    // post WXcurrent to APRS weather
-  delay(2000);                     // delay to show connection info
+  initSensor();      // initialize indoor sensor
+  setupTFTDisplay(); // initialize TFT display
+  splashScreen();    // stays on until logon is complete
+  logonToRouter();   // connect to WiFi
+  getWXcurrent();    // find latitude & longitude for your weather station
+  setTimeZone();     // set timezone
+  mountFS();         // mount LittleFS and prepare APRS bulletin file
+  dataScreen();      // show configuration data
+  getWXforecast();   // initialize weather data - needs lat/lon from getWXcurrent
+  APRSsendWX();      // post WXcurrent to APRS weather
+  delay(2000);       // delay to show connection info
 
   // start TickTwo timers
   tmrWXcurrent.start();
