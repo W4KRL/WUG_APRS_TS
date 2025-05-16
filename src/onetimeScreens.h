@@ -8,13 +8,13 @@
 #ifndef ONETIME_SCREENS_H
 #define ONETIME_SCREENS_H
 
-#include <Arduino.h>
-#include "tftDisplay.h"
-#include "credentials.h"
-#include <ezTime.h>
-#include "weatherService.h"
-#include "colors.h"
-#include "timezone_globals.h"
+// #include <Arduino.h>
+// #include "tftDisplay.h"
+// #include "credentials.h"
+// #include <ezTime.h>
+// #include "weatherService.h"
+// #include "colors.h"
+// #include "timezone_globals.h"
 
 void splashScreen();
 void dataScreen();
