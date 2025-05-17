@@ -1,8 +1,10 @@
-//! @file aprsService.cpp
-//! @brief APRS service implementation
-//! @details This file contains the functions for posting weather data to APRS-IS.
-//! @author Karl Berger
-//! @date 2025-05-14
+/**
+ * @file aprsService.cpp
+ * @brief APRS service implementation.
+ * @details Contains functions for posting weather data to APRS-IS.
+ * @author Karl Berger
+ * @date 2025-05-14
+ */
 
 #include "aprsService.h"
 

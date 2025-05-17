@@ -1,31 +1,83 @@
-//! @file aprsService.h
-//! @brief APRS service header
-//! @details This file contains the functions for posting weather data to APRS-IS.
-//! @author Karl Berger
-//! @date 2025-05-14
+/**
+ * @file aprsService.h
+ * @brief APRS service header
+ * @details Contains functions for posting weather data and bulletins to APRS-IS.
+ * 
+ * @author Karl Berger
+ * @date 2025-05-14
+ */
 
-#ifndef APRS_SERVICE_H
-#define APRS_SERVICE_H
+/**
+ * @param int lineCount
+ * @brief Number of aphorisms in file.
+ */
 
-#include <Arduino.h>
-// #include "credentials.h" // Wi-Fi and weather station credentials
-// #include <WiFiClient.h>
-// #include "weatherService.h"	 // weather data
-// #include "unitConversions.h" // unit conversion functions
+/**
+ * @param bool amBulletinSent
+ * @brief Flag indicating if the APRS morning bulletin has been sent.
+ */
 
-extern int lineCount;		// number of aphorisms in file
-extern bool amBulletinSent; // APRS morning bulletin
-extern bool pmBulletinSent; // APRS evening bulletin
-extern int lineIndex;		// APRS bulletin index
+/**
+ * @param bool pmBulletinSent
+ * @brief Flag indicating if the APRS evening bulletin has been sent.
+ */
 
+/**
+ * @param int lineIndex
+ * @brief Index for the APRS bulletin.
+ */
+
+/**
+ * @brief Posts a message to APRS-IS.
+ * @param message The message to post.
+ */
 void postToAPRS(String message);
-String APRSformatWeather();
-void APRSsendWX();
-String APRSformatBulletin(String message, String ID);
-void APRSsendBulletin(String msg, String ID);
-String APRSpadder(float value, int width);
-String APRSpadCall(String callSign);
-String APRSlocation(float lat, float lon);
 
-#endif // APRS_SERVICE_H
-// End of file
+/**
+ * @brief Formats weather data for APRS.
+ * @return Formatted weather string.
+ */
+String APRSformatWeather();
+
+/**
+ * @brief Sends formatted weather data to APRS-IS.
+ */
+void APRSsendWX();
+
+/**
+ * @brief Formats a bulletin message for APRS.
+ * @param message The bulletin message.
+ * @param ID The bulletin ID.
+ * @return Formatted bulletin string.
+ */
+String APRSformatBulletin(String message, String ID);
+
+/**
+ * @brief Sends a bulletin message to APRS-IS.
+ * @param msg The bulletin message.
+ * @param ID The bulletin ID.
+ */
+void APRSsendBulletin(String msg, String ID);
+
+/**
+ * @brief Pads a float value to a specified width for APRS formatting.
+ * @param value The value to pad.
+ * @param width The width to pad to.
+ * @return Padded string.
+ */
+String APRSpadder(float value, int width);
+
+/**
+ * @brief Pads a callsign for APRS formatting.
+ * @param callSign The callsign to pad.
+ * @return Padded callsign string.
+ */
+String APRSpadCall(String callSign);
+
+/**
+ * @brief Formats latitude and longitude for APRS location.
+ * @param lat Latitude.
+ * @param lon Longitude.
+ * @return Formatted location string.
+ */
+String APRSlocation(float lat, float lon);
