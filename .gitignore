@@ -1,7 +1,13 @@
-# PlatformIO related ignores
+# PlatformIO build output
 .pio/
-build/
-libdeps/
+.pioenvs/
+.pio/build/
 
-# VSCode files
+# Doxygen output
+docs/html/
+docs/latex/
+html/
+latex/
+
+# VS Code settings (optional)
 .vscode/
