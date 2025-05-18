@@ -2,13 +2,13 @@
 //! @brief Wi-Fi and Weather Underground credentials
 //! @details This file contains the Wi-Fi and Weather Underground credentials
 //! @author Karl Berger
-//! @date 2025-05-13
+//! @date 2025-05-18
 //! @note This file must reside in the same Arduino directory as the main sketch.
 
 #ifndef CREDENTIALS_H
 #define CREDENTIALS_H
 
-#define FW_VERSION 250516 // Firmware version
+const String FW_VERSION = "250518"; // Firmware version
 
 // Wi-Fi Credentials
 //! Place all values in quotes " "
@@ -45,9 +45,9 @@ IST  Asia/Kolkata
 
 // APRS credentials
 //! Place all values in quotes " "
-#define CALLSIGN "W4KRL-13" // call-SSID
-#define wm_passcode "9092"  // https://aprs.do3sww.de/
-#define APHORISM_FILE "/aphorisms.txt"
+const String CALLSIGN = "W4KRL-13"; // call-SSID
+const String APRS_PASSCODE = "9092";  // https://aprs.do3sww.de/
+const String APHORISM_FILE = "/aphorisms.txt";
 
 // ThingSpeak Credentials
 //! Place all values in quotes " "
@@ -68,16 +68,16 @@ IST  Asia/Kolkata
 
 // Weather update intervals (note minutes)
 //! Use integer values. No quote marks
-#define WX_CURRENT_INTERVAL 7   // minutes between current weather requests (Should be >= 1)
-#define WX_FORECAST_INTERVAL 13 // minutes between forecast requests
-#define WX_APRS_INTERVAL 10     // minutes between posting weather data to APRS (Must be >= 5)
-#define SCREEN_DURATION 5       // display frame interval in !!!seconds!!!
+const unsigned int WX_CURRENT_INTERVAL = 7;   // minutes between current weather requests (Should be >= 1)
+const unsigned int WX_FORECAST_INTERVAL = 13; // minutes between forecast requests
+const unsigned int WX_APRS_INTERVAL = 10;     // minutes between posting weather data to APRS (Must be >= 5)
+const unsigned int SCREEN_DURATION = 5;       // display frame interval in !!!seconds!!!
 
 // Display selections
 //! Use true or false. No quote marks
-#define DIGITAL_CLOCK true   // display digital clock (true/false)
-#define ANALOG_CLOCK false   // display analog clock (true/false)
-#define METRIC_DISPLAY false // weather display units
+const bool DIGITAL_CLOCK = true;   // display digital clock (true/false)
+const bool ANALOG_CLOCK = true;   // display analog clock (true/false)
+const bool METRIC_DISPLAY = false; // weather display units
 
 #endif // CREDENTIALS_H
 // End of file
