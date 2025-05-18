@@ -13,7 +13,7 @@ bool allowNumberFlip = false; // digital clock unpdate numerals
 ************** DIGITAL CLOCK FRAME *******************
 ******************************************************
 */
-void digitalClockFrame(bool drawFrame)
+void digitalClockFrame(bool shouldDrawFrame)
 {
   // 12/21/2024 clean updates, parameterized line spacing
 
@@ -26,7 +26,7 @@ void digitalClockFrame(bool drawFrame)
   tft.setFreeFont(LargeBold);
   tft.setTextDatum(TL_DATUM);
 
-  if (drawFrame)
+  if (shouldDrawFrame)
   {
     tft.fillScreen(C_DIGITAL_BG);
     // frame
