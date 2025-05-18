@@ -1,7 +1,6 @@
 /**
  * @file aprsService.cpp
- * @brief APRS service implementation.
- * @details Contains functions for posting weather data to APRS-IS.
+ * @brief Contains implementation functions for posting weather data and bulletins to APRS-IS.
  * @author Karl Berger
  * @date 2025-05-14
  */
@@ -12,7 +11,7 @@
 #include <WiFiClient.h>		 // APRS connection
 #include "weatherService.h"	 // weather data
 #include "unitConversions.h" // unit conversion functions
-#include "wug_debug.h"			 // debug print
+#include "wug_debug.h"		 // debug print
 
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!
@@ -26,7 +25,7 @@
 #define APRS_SERVER "noam.aprs2.net"				   // recommended for North America
 #define APRS_DEVICE_NAME "https://w4krl.com/iot-kits/" // link to my website
 #define APRS_SOFTWARE_NAME "D1S-VEVOR"				   // unit ID
-#define APRS_SOFTWARE_VERS String(FW_VERSION)		   // FW version
+#define APRS_SOFTWARE_VERS FW_VERSION				   // FW version
 #define APRS_PORT 14580								   // do not change port
 #define APRS_TIMEOUT 2000L							   // milliseconds
 
@@ -48,6 +47,7 @@ void postToAPRS(String message)
 	// See http://www.aprs-is.net/Connecting.aspx
 	// user mycall[-ss] pass passcode[ vers softwarename softwarevers[ UDP udpport][ servercommand]]
 
+	// Create a WiFiClient object to handle the connection to the APRS server
 	WiFiClient client;
 	if (client.connect(APRS_SERVER, APRS_PORT))
 	{
@@ -57,47 +57,53 @@ void postToAPRS(String message)
 	{
 		DEBUG_PRINTLN(F("APRS connection failed."));
 	}
-	if (client.connected())
+	if (!client.connected())
 	{
-		String rcvLine = client.readStringUntil('\n');
-		DEBUG_PRINTLN("Rcvd: " + rcvLine);
-		if (rcvLine.indexOf("full") > 0)
-		{
-			DEBUG_PRINTLN(F("APRS port full. Retrying."));
-			client.stop(); // disconnect from port
-			delay(500);
-			client.connect(APRS_SERVER, APRS_PORT); // retry
-		}
-		// send APRS-IS logon info
-		String dataString = "user " + (String)CALLSIGN + " pass " + wm_passcode;
-		dataString += " vers IoT-Kits " + APRS_SOFTWARE_VERS; // softwarevers
-		client.println(dataString);							  // send to APRS-IS
-		DEBUG_PRINTLN("APRS logon: " + dataString);
-		boolean verified = false;
-		unsigned long timeBegin = millis();
-		while (millis() - timeBegin < APRS_TIMEOUT)
+		return;
+	}
+
+	String rcvLine = client.readStringUntil('\n');
+	DEBUG_PRINTLN("Rcvd: " + rcvLine);
+	if (rcvLine.indexOf("full") > 0)
+	{
+		DEBUG_PRINTLN(F("APRS port full. Retrying."));
+		client.stop(); // disconnect from port
+		delay(500);
+		client.connect(APRS_SERVER, APRS_PORT); // retry
+	}
+
+	// send APRS-IS logon info
+	String dataString = "user " + CALLSIGN + " pass " + APRS_PASSCODE;
+	dataString += " vers IoT-Kits " + APRS_SOFTWARE_VERS; // softwarevers
+	client.println(dataString);							  // send to APRS-IS
+	DEBUG_PRINTLN("APRS logon: " + dataString);
+
+	boolean verified = false;
+	unsigned long timeBegin = millis();
+	while (!verified && (millis() - timeBegin < APRS_TIMEOUT))
+	{
+		if (client.available())
 		{
 			String rcvLine = client.readStringUntil('\n');
 			DEBUG_PRINTLN("Rcvd: " + rcvLine);
 			if (rcvLine.indexOf("verified") != -1 && rcvLine.indexOf("unverified") == -1)
 			{
 				verified = true;
-				break;
 			}
-			delay(100);
 		}
-		if (verified)
-		{
-			DEBUG_PRINTLN("APRS send: " + message);
-			client.println(message);
-			client.stop(); // disconnect from APRS-IS server
-			DEBUG_PRINTLN("APRS done.");
-		}
-		else
-		{
-			DEBUG_PRINTLN("APRS user unverified.");
-		}
+		yield(); // Allow other tasks to run
 	}
+
+	if (!verified)
+	{
+		DEBUG_PRINTLN("APRS user unverified.");
+		return;
+	}
+
+	DEBUG_PRINTLN("APRS send: " + message);
+	client.println(message);
+	client.stop(); // disconnect from APRS-IS server
+	DEBUG_PRINTLN("APRS done.");
 } // postToAPRS()
 
 /*
@@ -159,7 +165,7 @@ String APRSformatBulletin(String message, String ID)
 	 *  |1| 3 | 1|  5  |1| 0 to 67 |
 	 *  |_|___|__|_____|_|_________|
 	 */
-	String str = (String)CALLSIGN + ">APRS,TCPIP*:" + ":BLN" + ID + "     :" + message;
+	String str = CALLSIGN + ">APRS,TCPIP*:" + ":BLN" + ID + "     :" + message;
 	DEBUG_PRINTLN("APRS Bulletin: " + str);
 	return str;
 } // APRSformatBulletin()

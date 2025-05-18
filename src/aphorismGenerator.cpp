@@ -64,7 +64,7 @@ void mountFS()
 
   DEBUG_PRINT("FS: ");
   DEBUG_PRINT(lineCount);
-  DEBUG_PRINTLN(" lines in " + (String)APHORISM_FILE);
+  DEBUG_PRINTLN(" lines in " + APHORISM_FILE);
 
   // Create and shuffle the array directly during initialization
   lineArraySize = lineCount;

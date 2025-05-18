@@ -1,12 +1,6 @@
 /**
  * @file analogClock.cpp
  * @brief Analog clock display functions for TFT display.
- * 
- * This file contains the implementation of functions to render an analog clock
- * on a TFT display, including drawing the clock face, numerals, tick marks,
- * hands (second, minute, hour), and additional information such as timezone,
- * AM/PM indicator, and indoor sensor data (temperature and humidity).
- * 
  * @author Karl Berger
  * @date 2025-05-14
  */
@@ -23,13 +17,8 @@ void analogClockFrame(bool drawFrame);
 #include "unitConversions.h"
 #include "credentials.h"
 
-bool allowHandMovement = false;   // analog clock update hand
+bool allowHandMovement = false;   // global analog clock update hand
 
-/*
-******************************************************
-*************** ANALOG CLOCK FRAME *******************
-******************************************************
-*/
 void analogClockFrame(bool drawFrame)
 {
   // 11/27/2024 - adapted for TFT_eSPI
