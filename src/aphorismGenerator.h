@@ -1,8 +1,10 @@
 /**
  * @file aphorismGenerator.h
  * @brief Aphorism generator header.
- * @details This file contains the declarations for functions used to generate aphorisms from a file.
- *          The aphorisms are stored in a file on the LittleFS filesystem.
+ * @details This file contains the declarations for functions to generate and retrieve 
+ * aphorisms stored in a text file on the LittleFS filesystem. It includes logic for mounting
+ * the filesystem, counting lines in the aphorism file, shuffling the order of aphorisms,
+ * and selecting a random aphorism for use.
  * @author Karl Berger
  * @date 2025-05-16
  *

@@ -1,16 +1,6 @@
 /**
  * @file aphorismGenerator.cpp
  * @brief Implementation of aphorism generator functions.
- * @details
- * This file provides functions to generate and retrieve aphorisms stored in a file
- * on the LittleFS filesystem. It includes logic for mounting the filesystem, counting
- * lines in the aphorism file, shuffling the order of aphorisms, and selecting a random
- * aphorism for use.
- * 
- * - Uses LittleFS for file storage.
- * - Shuffles aphorism indices for random selection.
- * - Provides cleanup for dynamically allocated memory.
- * 
  * @author Karl Berger
  * @date 2025-05-16
  */

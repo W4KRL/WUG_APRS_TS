@@ -1,8 +1,10 @@
-//! @file indoorSensor.h
-//! @brief Indoor sensor functions
-//! @details This is the header file for the indoor sensor.
-//! @author Karl Berger
-//! @date 2025-05-15
+/**
+ * @file indoorSensor.h
+ * @brief Indoor sensor functions
+ * @details This is the header file for the indoor sensor.
+ * @author Karl Berger
+ * @date 2025-05-15
+ */
 
 #ifndef INDOOR_SENSOR_H
 #define INDOOR_SENSOR_H

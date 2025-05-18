@@ -1,7 +1,9 @@
-//! @file tftDisplay.h
-//! @brief TFT display configuration and dimensions
-//! @author Karl Berger
-//! @date 2025-05-14
+/**
+ * @file tftDisplay.h
+ * @brief TFT display configuration and dimensions
+ * @author Karl Berger
+ * @date 2025-05-14
+ */
 
 #ifndef TFT_DISPLAY_H
 #define TFT_DISPLAY_H

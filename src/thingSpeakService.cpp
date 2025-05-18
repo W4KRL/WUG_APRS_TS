@@ -1,8 +1,10 @@
-//! @file thingSpeakService.cpp
-//! @brief ThingSpeak service implementation
-//! @details This file contains the functions for posting weather data to ThingSpeak.
-//! @author Karl Berger
-//! @date 2025-05-16
+/**
+ * @file thingSpeakService.cpp
+ * @brief ThingSpeak service implementation
+ * @details This file contains the functions for posting weather data to ThingSpeak.
+ * @author Karl Berger
+ * @date 2025-05-16
+ */
 
 #include "thingSpeakService.h"
 

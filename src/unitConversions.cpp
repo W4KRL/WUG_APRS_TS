@@ -1,9 +1,11 @@
-//! @file unitConversions.cpp
-//! @brief Unit conversion functions
-//! @details This file contains the functions for unit conversions
-//! @author Karl Berger
-//! @date 2025-05-13
-//! @note This file must reside in the same Arduino directory as the main sketch.
+/**
+ * @file unitConversions.cpp
+ * @brief Unit conversion functions.
+ * @details This file contains the functions for unit conversions.
+ * @author Karl Berger
+ * @date 2025-05-13
+ * @note This file must reside in the same Arduino directory as the main sketch.
+ */
 
 #include "unitConversions.h" // unit conversion functions
 

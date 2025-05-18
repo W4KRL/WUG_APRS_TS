@@ -1,9 +1,11 @@
-//! @file credentials.h
-//! @brief Wi-Fi and Weather Underground credentials
-//! @details This file contains the Wi-Fi and Weather Underground credentials
-//! @author Karl Berger
-//! @date 2025-05-18
-//! @note This file must reside in the same Arduino directory as the main sketch.
+/**
+ * @file credentials.h
+ * @brief Wi-Fi and Weather Underground credentials
+ * @details This file contains the Wi-Fi and Weather Underground credentials
+ * @author Karl Berger
+ * @date 2025-05-18
+ * @note This file must reside in the same Arduino directory as the main sketch.
+ */
 
 #ifndef CREDENTIALS_H
 #define CREDENTIALS_H

@@ -1,6 +1,8 @@
-//! @file onetimeScreens.cpp
-//! brief Functions to display one-time screens on the TFT display
-//! @date 2025-05-18
+/**
+ * @file onetimeScreens.cpp
+ * @brief Functions to display one-time screens on the TFT display
+ * @date 2025-05-18
+ */
 
 #include "onetimeScreens.h"
 

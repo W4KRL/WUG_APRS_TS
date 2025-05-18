@@ -1,9 +1,19 @@
-//!	@file wug_debug.h
-//!	@brief Debugging functions	
-//!	@details This file contains the functions for debugging and
-//!          displaying messages on the serial monitor.
-//!	@author Karl Berger
-//!	@date 2025-05-13
+/**
+ * @file wug_debug.h
+ * @brief Debugging functions for serial output.
+ * @details
+ * This header provides macros for printing debug messages to the serial monitor.
+ * The macros are enabled when WUG_DEBUG is defined, allowing conditional
+ * compilation of debug output. This helps in troubleshooting and monitoring
+ * program execution without affecting release builds.
+ *
+ * Usage:
+ * - Define WUG_DEBUG before including this header to enable debug prints.
+ * - Use DEBUG_PRINT(x) and DEBUG_PRINTLN(x) for debug output.
+ *
+ * @author Karl Berger
+ * @date 2025-05-13
+ */
 
 #ifndef DEBUG_H
 #define DEBUG_H	

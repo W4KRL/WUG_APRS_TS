@@ -1,5 +1,30 @@
-// Created by https://oleddisplay.squix.ch/ Consider a donation
-// In case of problems make sure that you are using the font file with the correct version!
+/**
+ * @file Roboto_Bold_16.h
+ * @brief Font data for the Roboto Bold 16pt font, generated for use with OLED displays.
+ *
+ * This header file contains bitmap and glyph data for the Roboto Bold 16pt font, 
+ * suitable for use with graphics libraries such as Adafruit GFX. The font was 
+ * generated using https://oleddisplay.squix.ch/ and is intended for rendering 
+ * text on embedded displays.
+ *
+ * Data Structures:
+ * - Roboto_Bold_16Bitmaps: Array of bitmap data for each character glyph.
+ * - Roboto_Bold_16Glyphs: Array of GFXglyph structures, each describing a glyph's
+ *   bitmap offset, dimensions, and positioning.
+ * - Roboto_Bold_16: GFXfont structure referencing the bitmap and glyph arrays,
+ *   and defining the supported character range.
+ *
+ * Usage:
+ * - Include this file in your project and reference the `Roboto_Bold_16` font
+ *   with your graphics library's font rendering functions.
+ *
+ * Character Range:
+ * - Supports ASCII characters from 0x20 (space) to 0x7E (~).
+ *
+ * @note If you encounter problems, ensure you are using the correct version of the font file.
+ * @see https://oleddisplay.squix.ch/
+ */
+
 const uint8_t Roboto_Bold_16Bitmaps[] PROGMEM = {
 
   // Bitmap Data:

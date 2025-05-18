@@ -1,5 +1,8 @@
-//! @file timezone_globals.cpp
-//!	2025-05-16
+/**
+ * @file timezone_globals.cpp
+ * @brief Timezone management implementation.
+ * @date 2025-05-16
+ */
 
 #include "timezone_globals.h"
 

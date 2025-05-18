@@ -1,5 +1,30 @@
-// Created by https://oleddisplay.squix.ch/ Consider a donation
-// In case of problems make sure that you are using the font file with the correct version!
+/**
+ * @file Roboto_Bold_12.h
+ * @brief Font data for Roboto Bold 12pt, generated for use with OLED displays.
+ *
+ * This header file contains bitmap and glyph data for the Roboto Bold 12pt font,
+ * suitable for use with graphics libraries such as Adafruit GFX. The font was
+ * generated using https://oleddisplay.squix.ch/ and is intended for embedded
+ * systems with limited resources.
+ *
+ * - `Roboto_Bold_12Bitmaps[]`: Array of bitmap data for each character glyph.
+ * - `Roboto_Bold_12Glyphs[]`: Array of GFXglyph structures, each describing the
+ *    position, size, and offset of a character glyph within the bitmap array.
+ * - `Roboto_Bold_12`: GFXfont structure referencing the bitmap and glyph arrays,
+ *    and defining the supported character range (0x20 to 0x7E).
+ *
+ * Each glyph entry provides:
+ *   - bitmapOffset: Offset into the bitmap array where the glyph's data starts.
+ *   - width, height: Dimensions of the glyph in pixels.
+ *   - xAdvance: Distance to advance cursor after drawing the glyph.
+ *   - xOffset, yOffset: Position adjustments for rendering the glyph.
+ *
+ * @note
+ * - Ensure you are using the correct version of the font file for compatibility.
+ * - Consider supporting the font generator at https://oleddisplay.squix.ch/.
+ * - All data is stored in PROGMEM for efficient use of program memory on AVR/ESP platforms.
+ */
+
 const uint8_t Roboto_Bold_12Bitmaps[] PROGMEM = {
 
 	// Bitmap Data:

@@ -1,9 +1,11 @@
-//! @file weatherService.cpp
-//! @brief Weather service implementation
-//! @details This file contains the functions for fetching weather data from Weather Underground
-//!          and posting it to ThingSpeak.
-//! @author Karl Berger
-//! @date 2025-05-16
+/**
+ * @file weatherService.cpp
+ * @brief Weather service implementation
+ * @details This file contains the functions for fetching weather data from Weather Underground
+ *          and posting it to ThingSpeak.
+ * @author Karl Berger
+ * @date 2025-05-16
+ */
 
 #include "weatherService.h"
 

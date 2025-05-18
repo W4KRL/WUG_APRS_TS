@@ -1,8 +1,10 @@
-//! @file indoorSensor.cpp
-//! @brief Indoor sensor functions
-//! @details This file contains the functions to initialize and read the indoor sensor.
-//! @author Karl Berger
-//! @date 2025-05-15
+/**
+ * @file indoorSensor.cpp
+ * @brief Indoor sensor functions
+ * @details This file contains the functions to initialize and read the indoor sensor.
+ * @author Karl Berger
+ * @date 2025-05-15
+ */
 
 #include "indoorSensor.h"
 

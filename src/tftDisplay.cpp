@@ -1,5 +1,7 @@
-//! @file tftDisplay.cpp
-//! @brief TFT display implementation
+/**
+ * @file tftDisplay.cpp
+ * @brief TFT display implementation
+ */
 
 #include "tftDisplay.h"
 #include "Roboto_Bold_12.h"

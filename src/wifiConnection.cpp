@@ -1,9 +1,11 @@
-//! @file wifiConnection.cpp
-//! @brief This file contains the function to connect to the Wi-Fi network.
-//! @details The function logonToRouter() connects the ESP8266 to the specified Wi-Fi network.
-//! @details The function uses the WiFi library to connect to the network and prints the IP address once connected.
-//! @author Karl Berger
-//! @date 2025-05-16
+/**
+ * @file wifiConnection.cpp
+ * @brief Contains the function to connect to the Wi-Fi network.
+ * @details The function logonToRouter() connects the ESP8266 to the specified Wi-Fi network.
+ * Uses the WiFi library to connect and prints the IP address once connected.
+ * @author Karl Berger
+ * @date 2025-05-16
+ */
 
 #include "wifiConnection.h"
 
