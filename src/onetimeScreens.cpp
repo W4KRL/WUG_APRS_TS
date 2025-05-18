@@ -1,6 +1,6 @@
 //! @file onetimeScreens.cpp
 //! brief Functions to display one-time screens on the TFT display
-//! @date 2025-05-16
+//! @date 2025-05-18
 
 #include "onetimeScreens.h"
 
@@ -28,7 +28,7 @@ void splashScreen()
   tft.drawString("Display", SCREEN_W2, tl + 20);
   tft.drawString("by", SCREEN_W2, tl + 40);
   tft.drawString("IoT Kits", SCREEN_W2, tl + 60);
-  tft.drawString("v" + String(FW_VERSION) + "-M", SCREEN_W2, tl + 80);
+  tft.drawString("v" + FW_VERSION + "-M", SCREEN_W2, tl + 80);
   for (int i = 0; i < 4; i++)
   {
     tft.drawRoundRect(12 - 3 * i, 12 - 3 * i, SCREEN_W - 12, SCREEN_H - 12, 8, YELLOW);

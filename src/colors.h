@@ -1,13 +1,11 @@
-//! @file colors.h
-//! @brief Color definitions	
-//! @details This file contains the color definitions for the
-//!          TFT display. The colors are defined in RGB565 format.
-//! @author Karl Berger
-//! @date 2025-05-13
-//! @note This file is included in the main sketch and is used to
-//!       define the colors for the frames and text on the display.
-//! @note The colors are defined in RGB565 format, which is a 16-bit color format.
-//!       The colors are defined using the 16-bit hex values.
+/**
+ * @file colors.h
+ * @brief Color definitions for the TFT display.
+ * @details This file contains the color definitions for the TFT display.
+ *          The colors are defined in RGB565 format using the 16-bit hex values.
+ * @author Karl Berger
+ * @date 2025-05-18
+ */
 
 #ifndef COLORS_H
 #define COLORS_H
