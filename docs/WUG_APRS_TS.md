@@ -3,8 +3,6 @@
 This is a display and smart translator for Weather Underground data.
 The program is tailored to display data reported by the Vevor 7-in-1 Weather Station.
 
-
-
 ## To Do
 
 1. Clean the aphorism.txt file to replace all extended character with 8-bit ASCII equivalents.
