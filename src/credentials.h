@@ -1,12 +1,12 @@
 //! @file credentials.h
-//! @brief Wi-Fi and Weather Underground credentials 
+//! @brief Wi-Fi and Weather Underground credentials
 //! @details This file contains the Wi-Fi and Weather Underground credentials
 //! @author Karl Berger
 //! @date 2025-05-13
 //! @note This file must reside in the same Arduino directory as the main sketch.
 
 #ifndef CREDENTIALS_H
-#define CREDENTIALS_H   
+#define CREDENTIALS_H
 
 #define FW_VERSION 250516 // Firmware version
 
@@ -68,9 +68,9 @@ IST  Asia/Kolkata
 
 // Weather update intervals (note minutes)
 //! Use integer values. No quote marks
-#define WX_CURRENT_INTERVAL 2   // minutes between current weather requests (Should be >= 1)
-#define WX_FORECAST_INTERVAL 12 // minutes between forecast requests
-#define WX_APRS_INTERVAL 5      // minutes between posting weather data to APRS (Must be >= 5)
+#define WX_CURRENT_INTERVAL 7   // minutes between current weather requests (Should be >= 1)
+#define WX_FORECAST_INTERVAL 13 // minutes between forecast requests
+#define WX_APRS_INTERVAL 10     // minutes between posting weather data to APRS (Must be >= 5)
 #define SCREEN_DURATION 5       // display frame interval in !!!seconds!!!
 
 // Display selections
