@@ -80,9 +80,7 @@
 ******************************************************
 **************** DEVICE CONNECTIONS ******************
 ******************************************************
-*/
-/*
-!            WEMOS D1 MINI PINOUTS
+!              WEMOS D1 MINI PINOUTS
  /RST - TFT RST          TX - GPIO 1 not used
    A0 - ADC not used     RX - GPIO 3 not used
    D0 - GPIO 16 CS       D1 - GPIO 5 I2C SCL
@@ -116,25 +114,23 @@ TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
 */
 void setup()
 {
-  Serial.begin(115200); // serial monitor
-
-  initSensor();      // initialize indoor sensor
-  setupTFTDisplay(); // initialize TFT display
-  splashScreen();    // stays on until logon is complete
-  logonToRouter();   // connect to WiFi
-  getWXcurrent();    // find latitude & longitude for your weather station
-  setTimeZone();     // set timezone
-  mountFS();         // mount LittleFS and prepare APRS bulletin file
-  dataScreen();      // show configuration data
-  getWXforecast();   // initialize weather data - needs lat/lon from getWXcurrent
-  APRSsendWX();      // post WXcurrent to APRS weather
-  delay(2000);       // delay to show connection info
-
-  // start TickTwo timers
-  tmrWXcurrent.start();
-  tmrWXforecast.start();
-  tmrWXaprs.start();
-  tmrFrame.start();
+  Serial.begin(115200);  // serial monitor
+  initSensor();          // initialize indoor sensor
+  setupTFTDisplay();     // initialize TFT display
+  splashScreen();        // stays on until logon is complete
+  logonToRouter();       // connect to WiFi
+  getWXcurrent();        // find latitude & longitude for your weather station
+  setTimeZone();         // set timezone
+  mountFS();             // mount LittleFS and prepare APRS bulletin file
+  dataScreen();          // show configuration data
+  getWXforecast();       // initialize weather data - needs lat/lon from getWXcurrent
+  APRSsendWX();          // post WXcurrent to APRS weather
+  delay(2000);           // delay to show connection info
+  ;                      //! Start TickTwo timers
+  tmrWXcurrent.start();  //   timer for current weather
+  tmrWXforecast.start(); //   timer for forecasted weather
+  tmrWXaprs.start();     //   timer for posting weather to APRS
+  tmrFrame.start();      //   timer for sequential screens
 } // setup()
 
 /*
@@ -150,43 +146,7 @@ void loop()
   updateClocks();
   processBulletins();
 
-  // //! process APRS bulletins
-  // //? Check if it is 0800 EST and the morning bulletin has not been sent
-  // String bulletinText = "";
-  // if (myTZ.hour() == 8 && myTZ.minute() == 0 && !amBulletinSent)
-  // {
-  //   bulletinText = pickAphorism(APHORISM_FILE, lineArray);
-  //   APRSsendBulletin(bulletinText, "M"); // send morning bulletin
-  //   amBulletinSent = true;               // mark it sent
-
-  //   unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
-  //   postToThingSpeak();
-  //   unitStatus = "";
-  // }
-
-  // //? Check if it is 2000 EST and the evening bulletin has not been sent
-  // if (myTZ.hour() == 20 && myTZ.minute() == 0 && !pmBulletinSent)
-  // {
-  //   bulletinText = pickAphorism(APHORISM_FILE, lineArray);
-  //   APRSsendBulletin(bulletinText, "E"); // send evening bulletin
-  //   pmBulletinSent = true;               // mark it sent
-
-  //   unitStatus = myTZ.dateTime("d M ~P~M ") + bulletinText;
-  //   postToThingSpeak();
-  //   unitStatus = "";
-  // }
-
-  // //? Reset the bulletin flags at midnight if either is true
-  // static int lastDay = -1;
-  // int currentDay = myTZ.day();
-  // if (currentDay != lastDay)
-  // {
-  //   lastDay = currentDay;
-  //   amBulletinSent = false;
-  //   pmBulletinSent = false;
-  // }
-
-  //! update the tasks
+  //! Update the tasks
   tmrWXcurrent.update();  // get current weather
   tmrWXforecast.update(); // get forecasted weather
   tmrWXaprs.update();     // post weather data to APRS
