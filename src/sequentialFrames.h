@@ -13,6 +13,7 @@
 #define SEQUENTIAL_FRAMES_H
 
 void updateFrame();
+void updateClocks();
 void drawFramePanels(int top_background, int bottom_background);
 void firstWXframe();
 void secondWXframe();
