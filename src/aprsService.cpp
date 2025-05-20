@@ -12,6 +12,9 @@
 #include "weatherService.h"	 // weather data
 #include "unitConversions.h" // unit conversion functions
 #include "wug_debug.h"		 // debug print
+#include "timezone_globals.h"
+#include "aphorismGenerator.h"
+#include "thingspeakService.h"
 
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!
@@ -234,3 +237,41 @@ String APRSlocation(float lat, float lon)
 			 latDeg, latMin, latID, lonDeg, lonMin, lonID);
 	return String(buf);
 } // APRSlocation()
+
+void processBulletins(){
+	  //! process APRS bulletins
+  //? Check if it is 0800 EST and the morning bulletin has not been sent
+  String bulletinText = "";
+  if (myTZ.hour() == 8 && myTZ.minute() == 0 && !amBulletinSent)
+  {
+    bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+    APRSsendBulletin(bulletinText, "M"); // send morning bulletin
+    amBulletinSent = true;               // mark it sent
+
+    unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
+    postToThingSpeak();
+    unitStatus = "";
+  }
+  
+  //? Check if it is 2000 EST and the evening bulletin has not been sent
+  if (myTZ.hour() == 20 && myTZ.minute() == 0 && !pmBulletinSent)
+  {
+    bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+    APRSsendBulletin(bulletinText, "E"); // send evening bulletin
+    pmBulletinSent = true;               // mark it sent
+
+    unitStatus = myTZ.dateTime("d M ~P~M ") + bulletinText;
+    postToThingSpeak();
+    unitStatus = "";
+  }
+
+  //? Reset the bulletin flags at midnight if either is true
+  static int lastDay = -1;
+  int currentDay = myTZ.day();
+  if (currentDay != lastDay)
+  {
+    lastDay = currentDay;
+    amBulletinSent = false;
+    pmBulletinSent = false;
+  }
+}

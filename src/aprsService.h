@@ -73,3 +73,5 @@ String APRSpadCall(String callSign);
  * @return Formatted location string.
  */
 String APRSlocation(float lat, float lon);
+
+void processBulletins();
