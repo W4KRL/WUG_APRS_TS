@@ -58,3 +58,12 @@ What to Include in README.md
 //! Weather code from D1S-Display-WBIT-Mod.ino
 //! APRS code from D1M-WX2-APRS-TS.ino
 //! ThingSpeak code from XXXX
+
+ToDo:
+
+1. Improve updateClocks() to eliminate allowHandMovement and allowNumberFlip booleans.
+2. Filter aphorisms.txt to remove extended ASCII characters
+3. Adjust UV frame top to split evenly between lines
+4. ??? Add SCPI for paramter controls
+5. ??? Add Preferences for secure parameters
+6. Add Doxygen markup
