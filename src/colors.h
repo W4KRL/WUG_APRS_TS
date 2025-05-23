@@ -25,83 +25,83 @@
 // Color definitions similar to the resistor color code
 // By Bruce E. Hall
 // http://w8bh.net/pi/rgb565.py
-const int BLACK     =  0x0000;
-const int BROWN     =  0xA145;
-const int RED       =  0xF800;
-const int ORANGE    =  0xFD20;
-const int YELLOW    =  0xFFE0;
-const int GREEN     =  0x07E0;
-const int BLUE      =  0x001F;
-const int VIOLET    =  0xEC1D;
-const int GRAY      =  0x8410;
-const int WHITE     =  0xFFFF;
-const int GOLD      =  0xFEA0;
-const int SILVER    =  0xC618;
+extern const int BLACK;
+extern const int BROWN;
+extern const int RED;
+extern const int ORANGE;
+extern const int YELLOW;
+extern const int GREEN;
+extern const int BLUE;
+extern const int VIOLET;
+extern const int GRAY;
+extern const int WHITE;
+extern const int GOLD;
+extern const int SILVER;
 
 // Grays & others
-const int CYAN          =  0x07FF;
-const int MAGENTA       =  0xF81F;
-const int ORANGERED     =  0xFA20;
-const int LIME          =  0x07E0;
-const int LIGHTGRAY     =  0xD69A;
-const int DARKGRAY      =  0xAD55;
-const int SLATEGRAY     =  0x7412;
-const int DARKSLATEGRAY =  0x2A69;
-const int LIGHTGREEN    =  0x9772;
-const int MIDNIGHTBLUE  =  0x18CE;
+extern const int CYAN;
+extern const int MAGENTA;
+extern const int ORANGERED;
+extern const int LIME;
+extern const int LIGHTGRAY;
+extern const int DARKGRAY;
+extern const int SLATEGRAY;
+extern const int DARKSLATEGRAY;
+extern const int LIGHTGREEN;
+extern const int MIDNIGHTBLUE;
 
 // 12-COLOR PALLETE FOR COLOR BLINDNESS
-const int JAZZBERRY_JAM     = 0x980C;
-const int JEEPERS_CREEPERS  = 0x04F0;
-const int BARBIE_PINK       = 0xFAD5;
-const int AQUAMARINE        = 0x07F9;
-const int FRENCH_VIOLET     = 0x8019;
-const int DODGER_BLUE       = 0x047F;
-const int CAPRI             = 0x061F;
-const int PLUM              = 0xFD9F;
-const int CARMINE           = 0xA004;
-const int ALIZARIN_CRIMSON  = 0xE006;
-const int OUTRAGEOUS_ORANGE = 0xFB67;
-const int BRIGHT_SPARK      = 0xFE07;
+extern const int JAZZBERRY_JAM;
+extern const int JEEPERS_CREEPERS;
+extern const int BARBIE_PINK;
+extern const int AQUAMARINE;
+extern const int FRENCH_VIOLET;
+extern const int DODGER_BLUE;
+extern const int CAPRI;
+extern const int PLUM;
+extern const int CARMINE;
+extern const int ALIZARIN_CRIMSON;
+extern const int OUTRAGEOUS_ORANGE;
+extern const int BRIGHT_SPARK;
 
 // *******************************************************
 // ************ FRAME COLOR CHOICES **********************
 // *******************************************************
 
 // ANALOG CLOCK FRAME
-const int C_ANALOG_FRAME_EDGE    = RED;
-const int C_ANALOG_FRAME_BG      = GRAY;
-const int C_ANALOG_DIAL_BG       = WHITE;
-const int C_ANALOG_TZ            = YELLOW;      // timezone & AM/PM text
-const int C_ANALOG_DIAL_EDGE     = BLACK;
-const int C_ANALOG_DIAL_NUMERALS = BLACK;
-const int C_ANALOG_DIAL_TICKS    = BLACK;
-const int C_ANALOG_SEC_HAND      = ORANGERED;
-const int C_ANALOG_MIN_HAND      = BLUE;
-const int C_ANALOG_HOUR_HAND     = GREEN;
-const int C_ANALOG_HUB           = BLACK;       // prints over hands
-const int C_ANALOG_INDOOR        = RED;
+extern const int C_ANALOG_FRAME_EDGE;
+extern const int C_ANALOG_FRAME_BG;
+extern const int C_ANALOG_DIAL_BG;
+extern const int C_ANALOG_TZ;      // timezone & AM/PM text
+extern const int C_ANALOG_DIAL_EDGE;
+extern const int C_ANALOG_DIAL_NUMERALS;
+extern const int C_ANALOG_DIAL_TICKS;
+extern const int C_ANALOG_SEC_HAND;
+extern const int C_ANALOG_MIN_HAND;
+extern const int C_ANALOG_HOUR_HAND;
+extern const int C_ANALOG_HUB;       // prints over hands
+extern const int C_ANALOG_INDOOR;
 
 // DIGITAL CLOCK FRAME
-const int C_DIGITAL_FRAME_EDGE  = WHITE;
-const int C_DIGITAL_BG          = BLACK;
-const int C_DIGITAL_ALT_TZ      = ORANGERED;  // UTC
-const int C_DIGITAL_LOCAL_TZ    = LIME;       // local timezone
-const int C_DIGITAL_INDOOR      = YELLOW;     // Indoor temp & humid
+extern const int C_DIGITAL_FRAME_EDGE;
+extern const int C_DIGITAL_BG;
+extern const int C_DIGITAL_ALT_TZ;  // UTC
+extern const int C_DIGITAL_LOCAL_TZ;       // local timezone
+extern const int C_DIGITAL_INDOOR;     // Indoor temp & humid
 
 // WEATHER FRAMES
-const int C_WX_TOP_BG           = YELLOW;
-const int C_WX_TOP_TEXT         = BLUE;
-const int C_WX_BOTTOM_BG        = BLUE;
-const int C_WX_BOTTOM_TEXT      = YELLOW;
+extern const int C_WX_TOP_BG;
+extern const int C_WX_TOP_TEXT;
+extern const int C_WX_BOTTOM_BG;
+extern const int C_WX_BOTTOM_TEXT;
 
 // ALMANAC FRAME
-const int C_ALM_TOP_BG          = MIDNIGHTBLUE;
-const int C_ALM_TOP_TEXT        = YELLOW;
-const int C_ALM_BOTTOM_BG       = YELLOW;
-const int C_ALM_BOTTOM_TEXT     = BLUE;
-const int C_ALM_MOON_BG         = MIDNIGHTBLUE;
-const int C_ALM_MOON_FACE       = WHITE;
+extern const int C_ALM_TOP_BG;
+extern const int C_ALM_TOP_TEXT;
+extern const int C_ALM_BOTTOM_BG;
+extern const int C_ALM_BOTTOM_TEXT;
+extern const int C_ALM_MOON_BG;
+extern const int C_ALM_MOON_FACE;
 
 #endif // COLORS_H
 // End of file
