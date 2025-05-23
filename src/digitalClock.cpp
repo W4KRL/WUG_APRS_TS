@@ -59,7 +59,7 @@ void digitalClockFrame(bool shouldDrawFrame)
   const int textHeight = tft.fontHeight();                             // Initialization permitted within function
   const int lineSpacing = 3;                                           // Pixels between lines
   int row[4];                                                          // number of lines
-  row[0] = 10;
+  row[0] = 10;                                                         // top row
   for (int i = 1; i < 4; i++)
   {
     row[i] = row[i - 1] + textHeight + lineSpacing;

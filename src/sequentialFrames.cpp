@@ -259,29 +259,39 @@ void secondWXframe()
   // print labels, values, and units
   drawFramePanels(C_WX_TOP_BG, C_WX_BOTTOM_BG);
 
-  int TR = 2;  // top row
-  int LS = 18; // line spacing
+  // int TR = 2;  // top row
+  // int LS = 18; // line spacing
   tft.setTextColor(C_WX_TOP_TEXT);
   tft.setFreeFont(LargeBold);
   tft.setTextDatum(TC_DATUM);
-  tft.drawString("Forecast Hi/Lo", SCREEN_W2, TR); // high and low temperature forecasts
-  tft.drawString(tempMax + "/" + tempMin, SCREEN_W2, TR + LS);
+
+  int row[7];
+  int textHeight = tft.fontHeight();
+  int lineSpacing = -1; // squeeze the lines together
+  row[0] = 1;           // top row
+  for (int i = 1; i < 7; i++)
+  {
+    row[i] = row[i - 1] + textHeight + lineSpacing;
+  }
+
+  tft.drawString("Forecast Hi/Lo", SCREEN_W2, row[0]); // high and low temperature forecasts
+  tft.drawString(tempMax + "/" + tempMin, SCREEN_W2, row[1]);
 
   // labels flushed left  // labels flushed left
   tft.setTextColor(C_WX_BOTTOM_TEXT);
   tft.setTextDatum(TL_DATUM);
-  tft.drawString("Gust", LEFT_COL, TR + 3 * LS);
-  tft.drawString("Cloud", LEFT_COL, TR + 4 * LS);
-  tft.drawString("BP", LEFT_COL, TR + 5 * LS);
-  tft.drawString("Humid", LEFT_COL, TR + 6 * LS);
+  tft.drawString("Gust", LEFT_COL, row[3]);
+  tft.drawString("Cloud", LEFT_COL, row[4]);
+  tft.drawString("BP", LEFT_COL, row[5]);
+  tft.drawString("Humid", LEFT_COL, row[6]);
 
   // values flushed right
   tft.setTextDatum(TR_DATUM);
-  tft.drawString(getCompassDirection(wx.obsWindDir) + dispWindSpeed, RIGHT_COL, TR + 2 * LS);
-  tft.drawString(dispGust, RIGHT_COL, TR + 3 * LS);
-  tft.drawString(dispCloud, RIGHT_COL, TR + 4 * LS);
-  tft.drawString(dispSLP, RIGHT_COL, TR + 5 * LS);
-  tft.drawString(dispHumid, RIGHT_COL, TR + 6 * LS);
+  tft.drawString(getCompassDirection(wx.obsWindDir) + dispWindSpeed, RIGHT_COL, row[2]);
+  tft.drawString(dispGust, RIGHT_COL, row[3]);
+  tft.drawString(dispCloud, RIGHT_COL, row[4]);
+  tft.drawString(dispSLP, RIGHT_COL, row[5]);
+  tft.drawString(dispHumid, RIGHT_COL, row[6]);
 
   tft.unloadFont(); // save memory
 } // secondWXframe()
@@ -316,17 +326,27 @@ void almanacFrame()
 
   drawFramePanels(C_ALM_TOP_BG, C_ALM_BOTTOM_BG);
 
-  int TR = 2;  // top row
-  int LS = 18; // line spacing
+  // int TR = 2;  // top row
+  // int LS = 18; // line spacing
   tft.setTextColor(C_ALM_TOP_TEXT);
   tft.setTextDatum(TC_DATUM); // centered text
   tft.setFreeFont(LargeBold);
-  tft.drawString("Almanac", SCREEN_W2, TR);
-  tft.drawString(dateTime("D M j"), SCREEN_W2, TR + LS); // "Sat Aug 7"
+
+  int row[7];
+  int textHeight = tft.fontHeight();
+  int lineSpacing = -1; // squeeze the lines together
+  row[0] = 1;           // top row
+  for (int i = 1; i < 7; i++)
+  {
+    row[i] = row[i - 1] + textHeight + lineSpacing;
+  }
+
+  tft.drawString("Almanac", SCREEN_W2, row[0]);
+  tft.drawString(dateTime("D M j"), SCREEN_W2, row[1]); // "Sat Aug 7"
   tft.setTextColor(C_ALM_BOTTOM_TEXT);
-  tft.drawString("SUN", SCREEN_W2, TR + 2 * LS);       // 41
-  tft.drawString(sunRiseTime, SCREEN_W2, TR + 3 * LS); // 56
-  tft.drawString(sunSetTime, SCREEN_W2, TR + 4 * LS);  // 72
+  tft.drawString("SUN", SCREEN_W2, row[2]);       // 41
+  tft.drawString(sunRiseTime, SCREEN_W2, row[3]); // 56
+  tft.drawString(sunSetTime, SCREEN_W2, row[4]);  // 72
 
   // panel for moon data
   tft.fillRect(0, 90, SCREEN_W, SCREEN_H - 90, C_ALM_MOON_BG);
@@ -334,8 +354,8 @@ void almanacFrame()
   tft.setTextColor(C_ALM_TOP_TEXT, C_ALM_MOON_BG);
   tft.setTextDatum(TR_DATUM); // flush right
   drawMoonFace(20, SCREEN_H - 19, 15, fraction, C_ALM_MOON_FACE, C_ALM_MOON_BG);
-  tft.drawString(moonName.firstWord, SCREEN_W - 6, TR + 5 * LS);  // 93
-  tft.drawString(moonName.secondWord, SCREEN_W - 6, TR + 6 * LS); // 110
+  tft.drawString(moonName.firstWord, SCREEN_W - 6, row[5]);  // 93
+  tft.drawString(moonName.secondWord, SCREEN_W - 6, row[6]); // 110
 
   tft.unloadFont();
 } // almanacFrame()
