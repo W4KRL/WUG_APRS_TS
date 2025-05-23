@@ -1,7 +1,34 @@
+/**
+ * @brief Draws and updates the digital clock frame on the TFT display.
+ *
+ * This function displays both UTC and local time in a digital clock format,
+ * including labels and formatted time strings. It draws the initial frame
+ * and updates only the portions of the display that change (minutes and seconds)
+ * to optimize performance. The function uses static variables to track the
+ * previous minute and second, ensuring that only the necessary parts of the
+ * display are refreshed.
+ *
+ * @param shouldDrawFrame If true, redraws the entire clock frame and labels.
+ *                        If false, only updates the time numerals as needed.
+ *
+ * Dependencies:
+ * - Requires global access to `tft` (TFT display object), `UTC` and `myTZ`
+ *   (timezone objects), and color constants.
+ * - Uses custom fonts and text formatting functions.
+ *
+ * Display Layout:
+ * - Top: "UTC" label and UTC time (HH:MM:SS)
+ * - Bottom: Local timezone label and local time (HH:MM:SS)
+ * - Colors and fonts are set according to predefined constants.
+ *
+ * @author Karl Berger
+ * @date 2025-05-23
+ */
+
 #include "digitalClock.h"
 
 #include <Arduino.h>
-#include "tftDisplay.h"	
+#include "tftDisplay.h"
 #include "timezone_globals.h"
 #include "colors.h"
 #include "indoorSensor.h"
@@ -15,73 +42,77 @@ bool allowNumberFlip = false; // digital clock unpdate numerals
 */
 void digitalClockFrame(bool shouldDrawFrame)
 {
-  // 12/21/2024 clean updates, parameterized line spacing
+  static int prevMinute = -1;
+  static int prevSecond = -1;
 
-  int prevMinute = myTZ.minute();
+  // Time format Strings
+  const String hhmmFmt = "H~:i~:";        // HH:MM:
+  const String hhmmssFmt = hhmmFmt + "s"; // HH:MM:SS
 
-  int tl = 10;                                                            // sets location of top line
-  int lc = tft.width() / 2 - tft.textWidth(myTZ.dateTime("H~:i~:s")) / 2; // left text column
-  int h = tft.fontHeight();                                               // text height
-  int lm = 3;                                                             // pixels
+  // Set font prior to using font metrics
   tft.setFreeFont(LargeBold);
   tft.setTextDatum(TL_DATUM);
 
+  const int colLeft = tft.width() / 2 - tft.textWidth("88:88:88") / 2; // Use widest possible string
+  const int ssWidth = tft.textWidth("88");                             // Widest possible seconds width
+  const int ssCol = colLeft + tft.textWidth(UTC.dateTime(hhmmFmt));    // HH:MM width
+  const int textHeight = tft.fontHeight();                             // Initialization permitted within function
+  const int lineSpacing = 3;                                           // Pixels between lines
+  int row[4];                                                          // number of lines
+  row[0] = 10;
+  for (int i = 1; i < 4; i++)
+  {
+    row[i] = row[i - 1] + textHeight + lineSpacing;
+  }
+
   if (shouldDrawFrame)
   {
+    prevMinute = myTZ.minute();
+    prevSecond = myTZ.second();
+
     tft.fillScreen(C_DIGITAL_BG);
-    // frame
     tft.drawRoundRect(0, 0, SCREEN_W, SCREEN_H, 8, C_DIGITAL_FRAME_EDGE);
 
-    // Coordinated Universal Time label & HH:MM
+    // UTC
     tft.setTextColor(C_DIGITAL_ALT_TZ, C_DIGITAL_BG);
-    tft.drawString("UTC", lc, tl);
-    tft.drawString(UTC.dateTime("H~:i~:"), lc, tl + h + lm);
+    tft.drawString("UTC", colLeft, row[0]);                   // UTC label
+    tft.drawString(UTC.dateTime(hhmmssFmt), colLeft, row[1]); // UTC time
 
-    // local time zone label and HH:MM
+    // Local
     tft.setTextColor(C_DIGITAL_LOCAL_TZ, C_DIGITAL_BG);
-    tft.drawString(myTZ.getTimezoneName(), lc, tl + 2 * (h + lm));
-    tft.drawString(myTZ.dateTime("H~:i~:"), lc, tl + 3 * (h + lm));
+    tft.drawString(myTZ.getTimezoneName(), colLeft, row[2]);   // local timezone
+    tft.drawString(myTZ.dateTime(hhmmssFmt), colLeft, row[3]); // local time
+  }
 
-    // indoor temperature & humidity
-    if (indoorSensor == true)
-    {
-      tft.setTextColor(C_DIGITAL_INDOOR);
-      tft.drawString("Indoor", SCREEN_W2, tl + 80);
-      readSensor();
-      tft.setTextColor(C_DIGITAL_INDOOR, C_DIGITAL_BG); // print over dial
-      // if (METRIC_DISPLAY) {
-      //   tft.drawString(String(indoor.tempC, 1) + "C/" + String(indoor.humid, 0) + "%", SCREEN_W2, tl + 96);
-      // } else {
-      //   float tempF = CtoF(indoor.tempC);
-      //   tft.drawString(String(tempF, 0) + "F/" + String(indoor.humid, 0) + "%", SCREEN_W2, tl + 96);
-      // }
-    }
-  } // drawFrame
-
-  int w = 45;
-
-  // hour:minute update if changed during display
+  // Minute update check
   if (myTZ.minute() != prevMinute)
   {
-    tft.fillRect(lc, tl + 16, w, h, C_DIGITAL_BG);
+    tft.fillRect(colLeft, row[1], tft.textWidth("88:88"), textHeight, C_DIGITAL_BG);
     tft.setTextColor(C_DIGITAL_ALT_TZ);
-    tft.drawString(UTC.dateTime("H~:i~:"), lc, tl + h + lm);
-    tft.fillRect(lc, tl + 3 * (h + lm), w, h, C_DIGITAL_BG);
+    tft.drawString(UTC.dateTime(hhmmFmt), colLeft, row[1]);
+
+    tft.fillRect(colLeft, row[3], tft.textWidth("88:88"), textHeight, C_DIGITAL_BG);
     tft.setTextColor(C_DIGITAL_LOCAL_TZ);
-    tft.drawString(myTZ.dateTime("H~:i~:"), lc, tl + 3 * (h + lm));
+    tft.drawString(myTZ.dateTime(hhmmFmt), colLeft, row[3]);
+
     prevMinute = myTZ.minute();
   }
 
-  // second update
-  lc += tft.textWidth(myTZ.dateTime("H~:i~:"));
-  w = tft.textWidth("00");
-  tft.fillRect(lc, tl + h + lm, w, h, C_DIGITAL_BG);
-  tft.setTextColor(C_DIGITAL_ALT_TZ);
-  tft.drawString(UTC.dateTime("s"), lc, tl + h + lm);
+  // Second update check
+  if (myTZ.second() != prevSecond)
+  {
+    // UTC Seconds
+    tft.fillRect(ssCol, row[1], ssWidth, textHeight, C_DIGITAL_BG);
+    tft.setTextColor(C_DIGITAL_ALT_TZ);
+    tft.drawString(UTC.dateTime("s"), ssCol, row[1]);
 
-  tft.fillRect(lc, tl + 3 * (h + lm), w, h, C_DIGITAL_BG);
-  tft.setTextColor(C_DIGITAL_LOCAL_TZ);
-  tft.drawString(myTZ.dateTime("s"), lc, tl + 3 * (h + lm));
+    // Local Seconds
+    tft.fillRect(ssCol, row[3], ssWidth, textHeight, C_DIGITAL_BG);
+    tft.setTextColor(C_DIGITAL_LOCAL_TZ);
+    tft.drawString(myTZ.dateTime("s"), ssCol, row[3]);
+
+    prevSecond = myTZ.second();
+  }
 
   tft.unloadFont();
-} // digitalClockFrame()
+}

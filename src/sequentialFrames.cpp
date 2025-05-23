@@ -11,7 +11,7 @@
 #include "sequentialFrames.h"
 
 #include <Arduino.h>
-#include "tftDisplay.h"	
+#include "tftDisplay.h"
 #include "timezone_globals.h"
 #include "colors.h"
 #include "indoorSensor.h"
@@ -42,7 +42,7 @@ void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkCol
 void updateFrame()
 {
   allowHandMovement = false; // supress hand movement until analog clock is displayed
-  allowNumberFlip = false;  // supress numeral change unless digital clock is displayed
+  allowNumberFlip = false;   // supress numeral change unless digital clock is displayed
 
   int maxFrames = 3; // number of display frames w/o clocks
   if (ANALOG_CLOCK)
@@ -81,12 +81,12 @@ void updateFrame()
     else
     {                          // otherwise process digital clock
       digitalClockFrame(true); // draw clock frame
-      allowNumberFlip = true; // enable update on secondsChanged() in loop()
-    } //
+      allowNumberFlip = true;  // enable update on secondsChanged() in loop()
+    }
     break;                   //
   case 5:                    // definitely digital
     digitalClockFrame(true); // draw clock frame
-    allowNumberFlip = true; // enable update on secondsChanged() in loop()
+    allowNumberFlip = true;  // enable update on secondsChanged() in loop()
     break;
   default:
     break;
@@ -172,47 +172,56 @@ void firstWXframe()
     break;
   }
 
+  // Set font
+  tft.setTextColor(C_WX_TOP_TEXT);
+  tft.setTextDatum(TC_DATUM); // center text
+  tft.setFreeFont(LargeBold);
+
+  int row[7];
+  int textHeight = tft.fontHeight();
+  int lineSpacing = -1; // squeeze the lines together
+  row[0] = 1;           // top row
+  for (int i = 1; i < 7; i++)
+  {
+    row[i] = row[i - 1] + textHeight + lineSpacing;
+  }
+
   // print labels, values, abd units
   drawFramePanels(C_WX_TOP_BG, C_WX_BOTTOM_BG);
-  int TR = 2;  // top row
-  int LS = 18; // line spacing
 
-  tft.setTextColor(C_WX_TOP_TEXT);
-  tft.setTextDatum(TC_DATUM);
-  tft.setFreeFont(LargeBold);
-  tft.drawString("Weather", SCREEN_W2, TR);
+  tft.drawString("Weather", SCREEN_W2, row[0]);
   if (tft.textWidth(wx.forPhraseLong) < SCREEN_W)
-  {                                                       // Will the long phrase fit on the screen?
-    tft.drawString(wx.forPhraseLong, SCREEN_W2, TR + LS); // If yes, print long phrase in large font
+  {                                                      // Will the long phrase fit on the screen?
+    tft.drawString(wx.forPhraseLong, SCREEN_W2, row[1]); // If yes, print long phrase in large font
   }
   else
   {                             // else
     tft.setFreeFont(SmallBold); // Change to small font
     if (tft.textWidth(wx.forPhraseLong) < SCREEN_W)
-    {                                                       // Will the long phrase fit on the screen?
-      tft.drawString(wx.forPhraseLong, SCREEN_W2, TR + LS); // If yes, print the long phrase in small font
+    {                                                      // Will the long phrase fit on the screen?
+      tft.drawString(wx.forPhraseLong, SCREEN_W2, row[1]); // If yes, print the long phrase in small font
     }
     else
-    {                                                        // else
-      tft.setFreeFont(LargeBold);                            // Change to large font - we know short will fit
-      tft.drawString(wx.forPhraseShort, SCREEN_W2, TR + LS); // Print the short phrase in the large font
+    {                                                       // else
+      tft.setFreeFont(LargeBold);                           // Change to large font - we know short will fit
+      tft.drawString(wx.forPhraseShort, SCREEN_W2, row[1]); // Print the short phrase in the large font
     }
   }
 
   // print the labels flushed left
-  tft.setFreeFont(LargeBold);
-  tft.setTextDatum(TL_DATUM);
+  tft.setFreeFont(LargeBold); // restore font if changed in line 2
+  tft.setTextDatum(TL_DATUM); // flush left
   tft.setTextColor(YELLOW);
-  tft.drawString("Temp", LEFT_COL, TR + 2 * LS);
-  tft.drawString("Feel", LEFT_COL, TR + 3 * LS);
-  tft.drawString(dispPrecipType, LEFT_COL, TR + 4 * LS);
+  tft.drawString("Temp", LEFT_COL, row[2]);
+  tft.drawString("Feel", LEFT_COL, row[3]);
+  tft.drawString(dispPrecipType, LEFT_COL, row[4]);
 
   // print the data flushed right
-  tft.setTextDatum(TR_DATUM);
-  tft.drawString(dispTempNow, RIGHT_COL, TR + 2 * LS);
-  tft.drawString(dispTempFeel, RIGHT_COL, TR + 3 * LS);
-  tft.drawString(dispPrecipAmt, RIGHT_COL, TR + 4 * LS);
-  tft.drawString(dispPrecipRate, RIGHT_COL, TR + 5 * LS);
+  tft.setTextDatum(TR_DATUM); // flush right
+  tft.drawString(dispTempNow, RIGHT_COL, row[2]);
+  tft.drawString(dispTempFeel, RIGHT_COL, row[3]);
+  tft.drawString(dispPrecipAmt, RIGHT_COL, row[4]);
+  tft.drawString(dispPrecipRate, RIGHT_COL, row[5]);
 
   // panel for UV index, backgound color varies with UV index
   // top is straight, bottom is rounded
@@ -221,9 +230,9 @@ void firstWXframe()
   tft.fillRoundRect(0, SCREEN_H - 2 * HEADER_RAD, SCREEN_W, 2 * HEADER_RAD, HEADER_RAD, uvBG);
   tft.setTextColor(uvText);
   tft.setTextDatum(TL_DATUM); // flush left
-  tft.drawString("UV " + (String)uvi, LEFT_COL, TR + 6 * LS);
+  tft.drawString("UV " + (String)uvi, LEFT_COL, row[6]);
   tft.setTextDatum(TR_DATUM); // flush right
-  tft.drawString(uvLabel, RIGHT_COL, TR + 6 * LS);
+  tft.drawString(uvLabel, RIGHT_COL, row[6]);
 
   tft.unloadFont();
 } // firstWXframe()
@@ -510,8 +519,9 @@ void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkCol
   }
 } // drawMoonFace()
 
-void updateClocks(){
-    static int oldsec = -1;
+void updateClocks()
+{
+  static int oldsec = -1;
   if (myTZ.second() != oldsec)
   {
     oldsec = myTZ.second();
