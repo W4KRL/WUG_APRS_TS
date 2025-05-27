@@ -26,43 +26,43 @@
 // By Bruce E. Hall
 // http://w8bh.net/pi/rgb565.py
 extern const int BLACK;
-extern const int BROWN;
+// extern const int BROWN;
 extern const int RED;
-extern const int ORANGE;
+// extern const int ORANGE;
 extern const int YELLOW;
 extern const int GREEN;
 extern const int BLUE;
-extern const int VIOLET;
-extern const int GRAY;
+// extern const int VIOLET;
+// extern const int GRAY;
 extern const int WHITE;
-extern const int GOLD;
-extern const int SILVER;
+// extern const int GOLD;
+// extern const int SILVER;
 
 // Grays & others
-extern const int CYAN;
+// extern const int CYAN;
 extern const int MAGENTA;
-extern const int ORANGERED;
-extern const int LIME;
-extern const int LIGHTGRAY;
-extern const int DARKGRAY;
-extern const int SLATEGRAY;
-extern const int DARKSLATEGRAY;
-extern const int LIGHTGREEN;
-extern const int MIDNIGHTBLUE;
+// extern const int ORANGERED;
+// extern const int LIME;
+// extern const int LIGHTGRAY;
+// extern const int DARKGRAY;
+// extern const int SLATEGRAY;
+// extern const int DARKSLATEGRAY;
+// extern const int LIGHTGREEN;
+// extern const int MIDNIGHTBLUE;
 
 // 12-COLOR PALLETE FOR COLOR BLINDNESS
-extern const int JAZZBERRY_JAM;
-extern const int JEEPERS_CREEPERS;
-extern const int BARBIE_PINK;
-extern const int AQUAMARINE;
-extern const int FRENCH_VIOLET;
-extern const int DODGER_BLUE;
-extern const int CAPRI;
-extern const int PLUM;
-extern const int CARMINE;
+// extern const int JAZZBERRY_JAM;
+// extern const int JEEPERS_CREEPERS;
+// extern const int BARBIE_PINK;
+// extern const int AQUAMARINE;
+// extern const int FRENCH_VIOLET;
+// extern const int DODGER_BLUE;
+// extern const int CAPRI;
+// extern const int PLUM;
+// extern const int CARMINE;
 extern const int ALIZARIN_CRIMSON;
 extern const int OUTRAGEOUS_ORANGE;
-extern const int BRIGHT_SPARK;
+// extern const int BRIGHT_SPARK;
 
 // *******************************************************
 // ************ FRAME COLOR CHOICES **********************
