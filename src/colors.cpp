@@ -47,6 +47,7 @@ const int SLATEGRAY     =  0x7412;
 const int DARKSLATEGRAY =  0x2A69;
 const int LIGHTGREEN    =  0x9772;
 const int MIDNIGHTBLUE  =  0x18CE;
+const int DARKBLUE      =  0x6C5D;
 
 // 12-COLOR PALLETE FOR COLOR BLINDNESS
 const int JAZZBERRY_JAM     = 0x980C;
@@ -98,5 +99,5 @@ const int C_ALM_TOP_BG          = MIDNIGHTBLUE;
 const int C_ALM_TOP_TEXT        = YELLOW;
 const int C_ALM_BOTTOM_BG       = YELLOW;
 const int C_ALM_BOTTOM_TEXT     = BLUE;
-const int C_ALM_MOON_BG         = MIDNIGHTBLUE;
+const int C_ALM_MOON_BG         = DARKBLUE;
 const int C_ALM_MOON_FACE       = WHITE;

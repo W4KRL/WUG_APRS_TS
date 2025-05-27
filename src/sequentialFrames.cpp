@@ -5,7 +5,7 @@
  *          on the TFT display. The frames include weather data, almanac data,
  *          and clock data.
  * @author Karl Berger
- * @date 2025-05-16
+ * @date 2025-05-27
  */
 
 #include "sequentialFrames.h"
@@ -420,41 +420,32 @@ float moonPhase()
 */
 void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkColor)
 {
-  // this has been simplified for the dark face having the same
-  // color as the background. The code for the more general case
-  // has been commented out
+  // draws a moon face at xc, yc, radius r, fraction of lunation, and colors
+  // fract: 0=new, 0.25=first quarter, 0.5=full, 0.75=last quarter, 1=new
+  // liteColor: color of the illuminated part
+  // darkColor: color of the shadowed part
 
-  int face; // type of face depending phase fraction
-  float f;  // multiplier for ellipse width
-            // int lcor, rghtColor; // colors for left and right lines
-
+  int face = 0;
+  float f = 0;
   if (fract >= 0 && fract <= 0.25)
   {
-    face = 1; // waxing crescent, new to first quarter
+    face = 1; // waxing crescent
     f = -4 * fract + 1;
-    // lcor = darkColor;
-    // rghtColor = liteColor;
   }
   else if (fract > 0.25 && fract <= 0.5)
   {
-    face = 2; // waxing gibbous, first quarter to full
+    face = 2; // waxing gibbous
     f = 4 * fract - 1;
-    // lcor = darkColor;
-    // rghtColor = liteColor;
   }
   else if (fract > 0.5 && fract <= 0.75)
   {
-    face = 3; // waning gibbous, full to last quarter
+    face = 3; // waning gibbous
     f = -4 * fract + 3;
-    // lcor = liteColor;
-    // rghtColor = darkColor;
   }
   else
   {
-    face = 4; // waning crescent, last quarter to new
+    face = 4; // waning crescent
     f = 4 * fract - 3;
-    // lcor = liteColor;
-    // rghtColor = darkColor;
   }
 
   int hh = r * r;              // height squared
@@ -462,82 +453,65 @@ void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkCol
   int wwm = r * r;             // moon half-width squared
   int hhwwe = hh * wwe;        // for ellipse
   int hhwwm = hh * wwm;        // for moon
-  int x0e = f * r;             // half-width of ellipse starting value
-  int x0m = r;                 // half width of moon disk starting value
-  int dxe = 0;                 // ellipse x value
-  int dxm = 0;                 // moon x value
 
-  // calculate x values for circle and ellipse
+  int x0e = f * r; // half-width of ellipse starting value
+  int x0m = r;     // half width of moon disk starting value
+  int dxe = 0;     // ellipse x value
+  int dxm = 0;     // moon x value
+
   for (int y = 0; y <= r; y++)
   {
-    // for ellipse
-    int x1e = x0e - (dxe - 1);
-    while (x1e > 0)
-    {
-      if (x1e * x1e * hh + y * y * wwe <= hhwwe)
-      {
-        break;
-      }
-      x1e--;
-    }
+    // ellipse
+    int ySquaredWwe = y * y * wwe;
+    int x1e = sqrt((hhwwe - ySquaredWwe) / hh);
     dxe = x0e - x1e;
     x0e = x1e;
 
-    // for circle
-    int x1m = x0m - (dxm - 1); // for circle
-    while (x1m > 0)
-    {
-      if (x1m * x1m * hh + y * y * wwm <= hhwwm)
-      {
-        break;
-      }
-      x1m--;
-    }
+    // moon
+    int ySquaredWwm = y * y * wwm;
+    int x1m = sqrt((hhwwm - ySquaredWwm) / hh);
     dxm = x0m - x1m;
     x0m = x1m;
 
-    // draw graphic moon
     int xl = xc - x0m; // left end of left line
     int xr = xc + x0m; // right end of right line
     int xp;            // point between left and right lines
 
-    // draw only the lit lines assuming dark face is
-    // the same as the background
     switch (face)
     {
-    case 1: // waxing crescent - new to first quarter
+    case 1: // waxing crescent
       xp = xc + x0e;
+      tft.drawFastHLine(xl, yc - y, xp - xl, darkColor);
       tft.drawFastHLine(xp, yc - y, xr - xp, liteColor);
+      tft.drawFastHLine(xl, yc + y, xp - xl, darkColor);
       tft.drawFastHLine(xp, yc + y, xr - xp, liteColor);
       break;
-    case 2: // waxing gibbous  - first quarter to full
+    case 2: // waxing gibbous
       xp = xc - x0e;
+      tft.drawFastHLine(xl, yc - y, xp - xl, liteColor);
+      tft.drawFastHLine(xp, yc - y, xr - xp, darkColor);
+      tft.drawFastHLine(xl, yc + y, xp - xl, liteColor);
+      tft.drawFastHLine(xp, yc + y, xr - xp, darkColor);
+      break;
+    case 3: // waning gibbous
+      xp = xc + x0e;
+      tft.drawFastHLine(xl, yc - y, xp - xl, darkColor);
       tft.drawFastHLine(xp, yc - y, xr - xp, liteColor);
+      tft.drawFastHLine(xl, yc + y, xp - xl, darkColor);
       tft.drawFastHLine(xp, yc + y, xr - xp, liteColor);
       break;
-    case 3: // waning gibbous  - full to last quarter
-      xp = xc + x0e;
-      tft.drawFastHLine(xl, yc - y, xp - xl, liteColor);
-      tft.drawFastHLine(xl, yc + y, xp - xl, liteColor);
-      break;
-    case 4: // waning crescent - last quarter to new
+    case 4: // waning crescent
       xp = xc - x0e;
       tft.drawFastHLine(xl, yc - y, xp - xl, liteColor);
+      tft.drawFastHLine(xp, yc - y, xr - xp, darkColor);
       tft.drawFastHLine(xl, yc + y, xp - xl, liteColor);
+      tft.drawFastHLine(xp, yc + y, xr - xp, darkColor);
       break;
-    default: // handle unexpected values
-      // Optionally log or handle the error
+    default:
       break;
     }
-    // draw abutting lines above and below x-axis
-    // dark face is different than background
-    // if the dark color is not the same as the background
-    // tft.drawFastHLine(xl, yc - y, xp - xl, lcor);
-    // tft.drawFastHLine(xp, yc - y, xr - xp, rghtColor);
-    // tft.drawFastHLine(xl, yc + y, xp - xl, lcor);
-    // tft.drawFastHLine(xp, yc + y, xr - xp, rghtColor);
   }
-} // drawMoonFace()
+}
 
 void updateClocks()
 {
@@ -554,7 +528,7 @@ void updateClocks()
       analogClockFrame(false); // do not redraw frame
     }
   }
-}
+} // updateClocks()
 
 /*
 *******************************************************
@@ -570,7 +544,7 @@ String getCompassDirection(int degrees)
       "S", "SSW", "SW", "WSW",
       "W", "WNW", "NW", "NNW"};
 
-  int index = (degrees + 11.25) / 22.5; // Add 11.25 for rounding to the nearest compass point
+  int index = static_cast<int>((degrees + 11.25) / 22.5); // Add 11.25 for rounding to the nearest compass point
   index = index % 16;
   return compassPoints[index];
 } // getCompassDirection()
@@ -587,11 +561,11 @@ String getRainIntensity(float rate)
   // https://water.usgs.gov/edu/activity-howmuchrain-metric.html
 
   String intensity = "";
-  if (rate == 0)
+  if (rate >= 0.0 && rate < 0.0001)
   {
     intensity = "Rate Nil";
   }
-  else if (rate > 0.0 && rate < 2.5)
+  else if (rate >= 0.0001 && rate < 2.5)
   {
     intensity = "Light";
   }
@@ -603,7 +577,7 @@ String getRainIntensity(float rate)
   {
     intensity = "Heavy";
   }
-  else if (rate >= 50)
+  else
   {
     intensity = "Violent";
   }
