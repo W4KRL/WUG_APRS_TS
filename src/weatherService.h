@@ -1,45 +1,36 @@
 /**
  * @file weatherService.h
- * @brief Weather service header
- * @details Contains functions for fetching weather data from Weather Underground and posting it to ThingSpeak.
  * @author Karl Berger
- * @date 2025-05-16
+ * @date 2025-05-28
+ * @brief Weather service interface for fetching and storing weather data.
+ *
+ * This header defines the `weather` struct, which holds both forecast and observation data,
+ * and declares functions for retrieving and updating weather information from external APIs.
+ *
+ * Dependencies:
+ * - Arduino.h: For Arduino types and compatibility.
+ * - ArduinoJson.h: For JSON parsing and HTTP data handling.
+ *
+ * Structures:
+ * - weather: Holds forecast phrases, temperature extremes, cloud cover, sunrise/sunset times,
+ *            observation station location, and a variety of observed meteorological parameters.
+ *
+ * Globals:
+ * - wx: Externally declared instance of the `weather` struct for use across translation units.
+ *
+ * Functions:
+ * - getWXforecast(): Retrieve and update forecasted weather data.
+ * - getWXcurrent(): Retrieve and update current weather conditions.
+ * - fetchDataAndParse(getQuery, filter, doc): Perform HTTP GET request to Weather Underground API,
+ *      filter and parse the resulting JSON into the provided document.
+ * - updateWXcurrent(): Update current weather conditions and post data to ThingSpeak.
  */
-
 #ifndef WEATHER_SERVICE_H
 #define WEATHER_SERVICE_H
 
 #include <Arduino.h>     // for struct
 #include <ArduinoJson.h> // for fetchData prototype v7.2 Benoit Blanchon https://arduinojson.org/
 
-/**
- * @brief Structure to hold weather forecast and observation data.
- *
- * Members:
- * - forPhraseLong: Long weather forecast phrase (max 32 characters).
- * - forPhraseShort: Short weather forecast phrase (max 12 characters).
- * - forTempMax: Forecasted high temperature in degrees Celsius.
- * - forTempMin: Forecasted low temperature in degrees Celsius.
- * - forCloud: Forecasted average cloud coverage (percentage).
- * - forSunRise: Sunrise time from forecast (Unix time UTC).
- * - forSunSet: Sunset time from forecast (Unix time UTC).
- * - obsLat: Observation station latitude in decimal degrees.
- * - obsLon: Observation station longitude in decimal degrees.
- * - obsNeighborhood: Station neighborhood assigned by Weather Underground.
- * - obsSolarRadiation: Observed solar radiation in W/m^2.
- * - obsUV: Observed UV index.
- * - obsHumidity: Observed relative humidity (percentage).
- * - obsDewPt: Observed dew point in degrees Celsius.
- * - obsTemp: Observed temperature in degrees Celsius.
- * - obsHeatIndex: Observed heat index in degrees Celsius (valid for >18°C).
- * - obsWindChill: Observed wind chill in degrees Celsius (valid for <18°C).
- * - obsWindDir: Observed wind direction in degrees clockwise from north.
- * - obsWindSpeed: Observed wind speed in km/h.
- * - obsWindGust: Observed wind gust speed in km/h.
- * - obsPressure: Observed sea level pressure in millibars (hPa).
- * - obsPrecipRate: Observed instantaneous precipitation rate (mm/h).
- * - obsPrecipTotal: Observed total precipitation since midnight (mm).
- */
 struct weather
 {
   String forPhraseLong;     // long weather forecast 32 characters max

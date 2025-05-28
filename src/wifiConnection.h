@@ -1,20 +1,16 @@
-//! @file wifiConnection.h
-//! @brief Wi-Fi connection functions
-//! @details This file contains the functions to connect to Wi-Fi and
-//!          logon to the router.
-//! @author Karl Berger
-//! @date 2025-05-16
-
+/**
+ * @file wifiConnection.h
+ * @author Karl W. Berger
+ * @date 2025-05-28
+ * @brief Declares the interface for connecting the device to a Wi-Fi router.
+ *
+ * This header provides the declaration for the function responsible for establishing
+ * a connection to a predefined Wi-Fi network. Ensure that the Wi-Fi credentials are
+ * properly configured before invoking the connection function.
+ */
 #ifndef WIFI_CONNECTION_H
 #define WIFI_CONNECTION_H
 
-/**
- * @brief Connects the device to a Wi-Fi router.
- *
- * This function attempts to establish a connection to a predefined Wi-Fi network.
- * It handles the authentication and connection process required to access the router.
- * Ensure that the necessary Wi-Fi credentials are configured before calling this function.
- */
 void logonToRouter(); // function to connect to Wi-Fi
 
 #endif // WIFI_CONNECTION_H
