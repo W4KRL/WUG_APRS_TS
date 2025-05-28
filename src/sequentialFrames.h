@@ -8,16 +8,11 @@
  * @date 2025-05-16
  */
 
-
 #ifndef SEQUENTIAL_FRAMES_H
 #define SEQUENTIAL_FRAMES_H
 
 void updateFrame();
 void updateClocks();
-void drawFramePanels(int top_background, int bottom_background);
-void firstWXframe();
-void secondWXframe();
-void almanacFrame();
 
 #endif // SEQUENTIAL_FRAMES_H
 // End of file

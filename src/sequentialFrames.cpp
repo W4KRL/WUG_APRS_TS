@@ -33,6 +33,10 @@ String getCompassDirection(int degrees);
 float moonPhase();
 phaseName findPhaseName(float fraction);
 void drawMoonFace(int xc, int yc, int r, float fract, int liteColor, int darkColor);
+void drawFramePanels(int top_background, int bottom_background);
+void firstWXframe();
+void secondWXframe();
+void almanacFrame();
 
 /*
 ******************************************************
