@@ -1,5 +1,3 @@
-
-
 /**
  * @file thingSpeakService.h
  * @author Karl W. Berger
