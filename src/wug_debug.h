@@ -1,5 +1,7 @@
 /**
  * @file wug_debug.h
+ * @author Karl Berger
+ * @date 2025-05-28
  * @brief Debugging functions for serial output.
  * @details
  * This header provides macros for printing debug messages to the serial monitor.
@@ -10,9 +12,6 @@
  * Usage:
  * - Define WUG_DEBUG before including this header to enable debug prints.
  * - Use DEBUG_PRINT(x) and DEBUG_PRINTLN(x) for debug output.
- *
- * @author Karl Berger
- * @date 2025-05-13
  */
 
 #ifndef DEBUG_H
@@ -23,7 +22,6 @@
 #ifdef DEBUG
 #undef DEBUG  // Prevent conflicts with other libraries
 #endif
-
 
 //! Debug print macro
 #ifdef WUG_DEBUG
