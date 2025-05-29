@@ -13,15 +13,15 @@ void analogClockFrame(bool drawFrame);
 
 #include "analogClock.h"
 
-#include <Arduino.h>
-#include "tftDisplay.h"	
-#include "timezone_globals.h"
-#include "colors.h"
-#include "indoorSensor.h"
-#include "unitConversions.h"
-#include "credentials.h"
+#include <Arduino.h>          // Arduino functions
+#include "tftDisplay.h"       // for TFT display functions
+#include "timezone_globals.h" // for getTimezoneName(), to12HourFormat()
+#include "colors.h"           // for colors
+#include "indoorSensor.h"     // for indoor sensor data
+#include "unitConversions.h"  // for temperature conversions
+#include "credentials.h"      // for METRIC_DISPLAY
 
-bool allowHandMovement = false;   // global analog clock update hand
+bool allowHandMovement = false; // global analog clock update hand
 
 void analogClockFrame(bool drawFrame)
 {
@@ -98,8 +98,8 @@ void analogClockFrame(bool drawFrame)
 
   //! update hands. Process second hand, minute hand, hour hand in this order
   //? **** Process second hand ****
-  deg = myTZ.second() * 6;  // each second advances 6 degrees
-  rad = DEGtoRAD(deg); // Convert degrees to radians
+  deg = myTZ.second() * 6; // each second advances 6 degrees
+  rad = DEGtoRAD(deg);     // Convert degrees to radians
   static float oldSrad = rad;
 
   //! erase previous second hand
@@ -149,7 +149,7 @@ void analogClockFrame(bool drawFrame)
 
   //! **** Process hour hand ****
   //? Must draw hour hand last as it is shortest hand
-  int dialHour = (myTZ.hour() > 12) ? myTZ.hour() - 12 : myTZ.hour(); // XXXX check this. it was 13
+  int dialHour = to12HourFormat(myTZ.hour()); // convert to 12-hour format
   // 30 degree increments + adjust for minutes
   // the Swiss prefer incrementing the minute hand in minute steps
   deg = dialHour * 30 + int((myTZ.minute() / 12) * 6);
