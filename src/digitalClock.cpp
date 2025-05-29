@@ -1,12 +1,14 @@
 /**
+ * @file digitalClock.cpp
+ * @author Karl Berger
+ * @date 2025-05-23
  * @brief Draws and updates the digital clock frame on the TFT display.
- *
- * This function displays both UTC and local time in a digital clock format,
- * including labels and formatted time strings. It draws the initial frame
- * and updates only the portions of the display that change (minutes and seconds)
- * to optimize performance. The function uses static variables to track the
- * previous minute and second, ensuring that only the necessary parts of the
- * display are refreshed.
+ * @details This function displays both UTC and local time in a digital clock format,
+ *          including labels and formatted time strings. It draws the initial frame
+ *          and updates only the portions of the display that change (minutes and seconds)
+ *          to optimize performance. The function uses static variables to track the
+ *          previous minute and second, ensuring that only the necessary parts of the
+ *          display are refreshed.
  *
  * @param shouldDrawFrame If true, redraws the entire clock frame and labels.
  *                        If false, only updates the time numerals as needed.
@@ -20,9 +22,6 @@
  * - Top: "UTC" label and UTC time (HH:MM:SS)
  * - Bottom: Local timezone label and local time (HH:MM:SS)
  * - Colors and fonts are set according to predefined constants.
- *
- * @author Karl Berger
- * @date 2025-05-23
  */
 
 #include "digitalClock.h"
@@ -35,11 +34,22 @@
 
 bool allowNumberFlip = false; // digital clock unpdate numerals
 
-/*
-******************************************************
-************** DIGITAL CLOCK FRAME *******************
-******************************************************
-*/
+/**
+ * @brief Draws and updates a digital clock frame on the TFT display.
+ *
+ * This function displays both UTC and local times in a digital clock format,
+ * including hours, minutes, and seconds. It draws a frame, labels, and time values,
+ * and efficiently updates only the portions of the display that change (minutes or seconds).
+ * The function uses static variables to track the previous minute and second, ensuring
+ * that only the necessary parts of the display are refreshed.
+ *
+ * @param shouldDrawFrame If true, redraws the entire clock frame and all time values.
+ *                        If false, only updates the minute and second portions as needed.
+ *
+ * @note Assumes global objects and constants such as `tft`, `UTC`, `myTZ`, `C_DIGITAL_BG`,
+ *       `C_DIGITAL_FRAME_EDGE`, `C_DIGITAL_ALT_TZ`, `C_DIGITAL_LOCAL_TZ`, `SCREEN_W`,
+ *       `SCREEN_H`, and `LargeBold` are defined elsewhere.
+ */
 void digitalClockFrame(bool shouldDrawFrame)
 {
   static int prevMinute = -1;
@@ -116,3 +126,24 @@ void digitalClockFrame(bool shouldDrawFrame)
 
   tft.unloadFont();
 }
+
+/**
+ * @brief Updates the digital clock display if the seconds value has changed.
+ *
+ * This function checks if the current second (retrieved from myTZ) is different
+ * from the previously stored second. If the second has changed, it updates the
+ * stored value and, if the digital clock display is enabled (allowNumberFlip is true),
+ * it triggers a refresh of the digital clock display without redrawing the frame.
+ */
+void updateDigitalClock()
+{
+  static int oldsec = -1;
+  if (myTZ.second() != oldsec)
+  {
+    oldsec = myTZ.second();
+    if (allowNumberFlip)
+    {                           // user has selected the digital clock
+      digitalClockFrame(false); // do not redraw frame
+    }
+  }
+} // updateDigitalClock()

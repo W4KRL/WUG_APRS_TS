@@ -188,3 +188,16 @@ void analogClockFrame(bool drawFrame)
 
   tft.unloadFont();
 } // analogClockFrame()
+
+void updateAnalogClock()
+{
+  static int oldsec = -1;
+  if (myTZ.second() != oldsec)
+  {
+    oldsec = myTZ.second();
+    if (allowHandMovement)
+    {                          // user has selected the analog clock
+      analogClockFrame(false); // do not redraw frame
+    }
+  }
+} // updateClocks()

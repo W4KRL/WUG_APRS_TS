@@ -80,7 +80,8 @@ void setup()
 void loop()
 {
   events(); // ezTime events including autoconnect to NTP server
-  updateClocks();
+  updateAnalogClock();
+  updateDigitalClock();
   processBulletins();
 
   //! Update the tasks

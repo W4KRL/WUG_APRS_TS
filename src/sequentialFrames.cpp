@@ -364,23 +364,6 @@ void almanacFrame()
   tft.unloadFont();
 } // almanacFrame()
 
-void updateClocks()
-{
-  static int oldsec = -1;
-  if (myTZ.second() != oldsec)
-  {
-    oldsec = myTZ.second();
-    if (allowNumberFlip)
-    {                           // user has selected the digital clock
-      digitalClockFrame(false); // do not redraw frame
-    }
-    if (allowHandMovement)
-    {                          // user has selected the analog clock
-      analogClockFrame(false); // do not redraw frame
-    }
-  }
-} // updateClocks()
-
 /*
 *******************************************************
 ************** getCompassDirection ********************

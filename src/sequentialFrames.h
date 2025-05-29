@@ -12,7 +12,6 @@
 #define SEQUENTIAL_FRAMES_H
 
 void updateFrame();
-void updateClocks();
 
 #endif // SEQUENTIAL_FRAMES_H
 // End of file
