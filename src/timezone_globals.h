@@ -6,10 +6,10 @@
 #ifndef TIMEZONE_GLOBALS_H
 #define TIMEZONE_GLOBALS_H
 
-#include <Arduino.h>	
+#include <Arduino.h>
 
 #ifdef DEBUG
-#undef DEBUG  // Prevent conflicts with other libraries
+#undef DEBUG // Prevent conflicts with other libraries
 #endif
 
 #include <ezTime.h> // for Timezone
@@ -19,12 +19,13 @@
  *
  * This global variable provides access to the configured timezone settings,
  * allowing time conversions and timezone-aware operations throughout the application.
- * 
+ *
  * @note The actual definition and initialization of `myTZ` must be provided elsewhere in the codebase.
  */
 extern Timezone myTZ;
 
-void setTimeZone(); // Function to set the timezone
+void setTimeZone();			  // Function to set the timezone
+int to12HourFormat(int hour); // Convert 24-hour format to 12-hour format
 
 #endif
 // End of file
