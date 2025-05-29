@@ -53,3 +53,57 @@ float KMHtoKNOTS(float kmh)
 {
 	return 0.5399668 * kmh;
 } // KMHtoKNOTS()
+
+/*
+*******************************************************
+************** getCompassDirection ********************
+*******************************************************
+*/
+String getCompassDirection(int degrees)
+{
+  // translates compass degrees to 16 points with 1 to 3 letter abbreviations
+  String compassPoints[] = {
+      "N", "NNE", "NE", "ENE",
+      "E", "ESE", "SE", "SSE",
+      "S", "SSW", "SW", "WSW",
+      "W", "WNW", "NW", "NNW"};
+
+  int index = static_cast<int>((degrees + 11.25) / 22.5); // Add 11.25 for rounding to the nearest compass point
+  index = index % 16;
+  return compassPoints[index];
+} // getCompassDirection()
+
+/*
+*******************************************************
+***************** getRainIntensity ********************
+*******************************************************
+*/
+String getRainIntensity(float rate)
+{
+	// translates rainfall rate in mm/h to meteorlogical name
+	// https://en.wikipedia.org/wiki/Rain
+	// https://water.usgs.gov/edu/activity-howmuchrain-metric.html
+
+	String intensity = "";
+	if (rate >= 0.0 && rate < 0.0001)
+	{
+		intensity = "Rate Nil";
+	}
+	else if (rate >= 0.0001 && rate < 2.5)
+	{
+		intensity = "Light";
+	}
+	else if (rate >= 2.5 && rate < 7.6)
+	{
+		intensity = "Moderate";
+	}
+	else if (rate >= 7.6 && rate < 50)
+	{
+		intensity = "Heavy";
+	}
+	else
+	{
+		intensity = "Violent";
+	}
+	return intensity;
+} // getRainIntensity()

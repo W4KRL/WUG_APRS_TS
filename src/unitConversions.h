@@ -20,6 +20,8 @@ float DEGtoRAD(float deg);   ///< convert degrees to radians
 float HPAtoINHG(float hpa);  ///< convert hectoPascal (millibar) to inches of mercury
 float MtoFT(float meters);   ///< convert meters to feet
 float KMHtoKNOTS(float kmh); ///< convert kilometers per hour to knots
+String getCompassDirection(int degrees) ; ///< convert degrees to compass direction
+String getRainIntensity(float rate); ///< convert rain rate to intensity description
 
 #endif // UNIT_CONVERSION_H
 // End of file
