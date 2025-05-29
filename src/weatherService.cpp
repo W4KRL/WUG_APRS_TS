@@ -1,10 +1,10 @@
 /**
  * @file weatherService.cpp
+ * @author Karl Berger
+ * @date 2025-05-29
  * @brief Weather service implementation
  * @details This file contains the functions for fetching weather data from Weather Underground
- *          and posting it to ThingSpeak.
- * @author Karl Berger
- * @date 2025-05-16
+ *          and posting it to the display, ThingSpeak, and APRS
  */
 
 #include "weatherService.h"
@@ -22,13 +22,13 @@ weather wx; // global weather object
 // !!! DO NOT CHANGE !!!
 // documentation: https://docs.google.com/document/d/1eKCnKXI9xnoMGRRzOL1xPCBihNV2rOet08qpE_gArAY/edit?tab=t.0
 // WX_KEY is in credentials.h
-#define WX_HOST "https://api.weather.com"        // Weather Underground PWS host
-#define WX_CURRENT "v2/pws/observations/current" // PWS current observations API
-#define WX_FORECAST "v3/wx/forecast/daily/5day"  // PWS 5-day forecast API
-#define WX_LANGUAGE "en-US"                      // language for forecast
-#define WX_UNITS "m"                             // e = english, m = metric MUST USE METRIC!!!
-#define WX_FORMAT "json"                         // data format
-#define WX_PRECISION "decimal"                   // null = integer, decimal = decimal
+const String WX_HOST = "https://api.weather.com";
+const String WX_CURRENT = "v2/pws/observations/current";
+const String WX_FORECAST = "v3/wx/forecast/daily/5day";
+const String WX_LANGUAGE = "en-US";
+const String WX_UNITS = "m"; // MUST USE METRIC!!!
+const String WX_FORMAT = "json";
+const String WX_PRECISION = "decimal";
 
 /*
 ******************************************************
@@ -45,13 +45,11 @@ void getWXcurrent()
   // By Copilot 12/15/2024
   // solves String capacity problem
 
-  const char *getQuery =
-      WX_HOST "/" WX_CURRENT
-              "?stationId=" WX_STATION_ID
-              "&format=" WX_FORMAT
-              "&units=" WX_UNITS
-              "&numericPrecision=" WX_PRECISION
-              "&apiKey=" WX_KEY;
+  String getQuery = WX_HOST + "/" + WX_CURRENT + "?stationId=" + WX_STATION_ID +
+                    "&format=" + WX_FORMAT + 
+                    "&units=" + WX_UNITS +
+                    "&numericPrecision=" + WX_PRECISION + 
+                    "&apiKey=" + WX_KEY;
 
   JsonDocument filter; // filter to reduce size of JsonDocument
   filter["observations"][0]["lat"] = true;
@@ -67,10 +65,6 @@ void getWXcurrent()
   JsonDocument doc; // holds filtered json stream
 
   fetchDataAndParse(getQuery, filter, doc);
-  // #ifdef DEBUG
-  //   serializeJsonPretty(doc, Serial);
-  //   Serial.println();
-  // #endif
 
   JsonObject observations_0 = doc["observations"][0];
   if (observations_0["lat"] != 0)
@@ -99,7 +93,7 @@ void getWXcurrent()
   }
 } // getWXcurrent()
 
-// TickTwo callback function
+// TickTwo callback function for updating current weather and posting to ThingSpeak
 void updateWXcurrent()
 {
   getWXcurrent();
@@ -121,9 +115,12 @@ void getWXforecast()
   // By Copilot 12/15/2024
   // solves String capacity problem
 
-  char getQuery[200];
-  snprintf(getQuery, sizeof(getQuery), "%s/%s?geocode=%f,%f&format=%s&units=%s&language=%s&apiKey=%s",
-           WX_HOST, WX_FORECAST, wx.obsLat, wx.obsLon, WX_FORMAT, WX_UNITS, WX_LANGUAGE, WX_KEY);
+  String getQuery = WX_HOST + "/" + WX_FORECAST + 
+                    "?geocode=" + String(wx.obsLat) + "," + String(wx.obsLon) +
+                    "&format=" + WX_FORMAT + 
+                    "&units=" + WX_UNITS + 
+                    "&language="+ WX_LANGUAGE + 
+                    "&apiKey=" + WX_KEY;
 
   JsonDocument filter;
   filter["calendarDayTemperatureMax"] = true;   // The midnight to midnight daily maximum temperature.
