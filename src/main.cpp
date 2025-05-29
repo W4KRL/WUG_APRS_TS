@@ -1,13 +1,11 @@
 /**
  * @file main.cpp
- * @brief Main application for the Magnetic Loop Antenna Controller
- * @details This program initializes communication with sensors and processes input data
- *
  * @author Karl Berger
  * @date 2025-05-19
- *
- * @note Ensure the device is connected as described in README.md.
- *
+ * @brief Main application for the Magnetic Loop Antenna Controller
+ * @details This program initializes communication with sensors and processes input data
+ *          from the Weather Underground API, and formats it for display and posting to
+ *          ThingSpeak, and APRS-IS.
  * @todo read day/night indicator and choose json data accordingly
  * @todo add APRS bulletin for sunrise/sunset
  * @todo test WUG API responses for absence. Do not update WX data if response missing
@@ -53,23 +51,23 @@ TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
 */
 void setup()
 {
-  Serial.begin(115200); // serial monitor
-  initSensor();         // initialize indoor sensor
-  setupTFTDisplay();    // initialize TFT display
-  splashScreen();       // stays on until logon is complete
-  logonToRouter();      // connect to WiFi
-  getWXcurrent();       // find latitude & longitude for your weather station
-  setTimeZone();        // set timezone
-  mountFS();            // mount LittleFS and prepare APRS bulletin file
-  dataScreen();         // show configuration data
-  getWXforecast();      // initialize weather data - needs lat/lon from getWXcurrent
-  APRSsendWX();         // post WXcurrent to APRS weather
-  delay(2000);          // delay to show connection info
-  //! Start TickTwo timers
-  tmrWXcurrent.start();  //   timer for current weather
-  tmrWXforecast.start(); //   timer for forecasted weather
-  tmrWXaprs.start();     //   timer for posting weather to APRS
-  tmrFrame.start();      //   timer for sequential screens
+  Serial.begin(115200);  // serial monitor
+  initSensor();          // initialize indoor sensor
+  setupTFTDisplay();     // initialize TFT display
+  splashScreen();        // stays on until logon is complete
+  logonToRouter();       // connect to WiFi
+  getWXcurrent();        // find latitude & longitude for your weather station
+  setTimeZone();         // set timezone
+  mountFS();             // mount LittleFS and prepare APRS bulletin file
+  dataScreen();          // show configuration data
+  getWXforecast();       // initialize weather data - needs lat/lon from getWXcurrent
+  APRSsendWX();          // post WXcurrent to APRS weather
+  delay(2000);           // delay to show connection info
+  ;                      //! Start TickTwo timers
+  tmrWXcurrent.start();  // timer for current weather
+  tmrWXforecast.start(); // timer for forecasted weather
+  tmrWXaprs.start();     // timer for posting weather to APRS
+  tmrFrame.start();      // timer for sequential screens
 } // setup()
 
 /*
