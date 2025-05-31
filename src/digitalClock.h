@@ -10,10 +10,7 @@
 #ifndef DIGITAL_CLOCK_H
 #define DIGITAL_CLOCK_H
 
-extern bool allowNumberFlip; // digital clock unpdate numerals
-
 void digitalClockFrame(bool drawFrame);
-void updateDigitalClock();
 
 #endif // DIGITAL_CLOCK_H
 // End of file

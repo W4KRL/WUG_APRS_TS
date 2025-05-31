@@ -32,7 +32,7 @@
 #include "colors.h"
 #include "indoorSensor.h"
 
-bool allowNumberFlip = false; // digital clock unpdate numerals
+// bool allowNumberFlip = false; // digital clock unpdate numerals
 
 /**
  * @brief Draws and updates a digital clock frame on the TFT display.
@@ -52,9 +52,6 @@ bool allowNumberFlip = false; // digital clock unpdate numerals
  */
 void digitalClockFrame(bool shouldDrawFrame)
 {
-  static int prevMinute = -1;
-  static int prevSecond = -1;
-
   // Time format Strings
   const String hhmmFmt = "H~:i~:";        // HH:MM:
   const String hhmmssFmt = hhmmFmt + "s"; // HH:MM:SS
@@ -63,13 +60,13 @@ void digitalClockFrame(bool shouldDrawFrame)
   tft.setFreeFont(LargeBold);
   tft.setTextDatum(TL_DATUM);
 
-  const int colLeft = tft.width() / 2 - tft.textWidth("88:88:88") / 2; // Use widest possible string
-  const int ssWidth = tft.textWidth("88");                             // Widest possible seconds width
-  const int ssCol = colLeft + tft.textWidth(UTC.dateTime(hhmmFmt));    // HH:MM width
-  const int textHeight = tft.fontHeight();                             // Initialization permitted within function
-  const int lineSpacing = 3;                                           // Pixels between lines
-  int row[4];                                                          // number of lines
-  row[0] = 10;                                                         // top row
+  const int colLeft = tft.width() / 2 - tft.textWidth("88:88:88") / 2;
+  const int ssWidth = tft.textWidth("88");
+  const int ssCol = colLeft + tft.textWidth(UTC.dateTime(hhmmFmt));
+  const int textHeight = tft.fontHeight();
+  const int lineSpacing = 3;
+  int row[4];
+  row[0] = 10;
   for (int i = 1; i < 4; i++)
   {
     row[i] = row[i - 1] + textHeight + lineSpacing;
@@ -77,40 +74,26 @@ void digitalClockFrame(bool shouldDrawFrame)
 
   if (shouldDrawFrame)
   {
-    prevMinute = myTZ.minute();
-    prevSecond = myTZ.second();
-
+    // Full redraw: background, frame, labels, and full time
     tft.fillScreen(C_DIGITAL_BG);
     tft.drawRoundRect(0, 0, SCREEN_W, SCREEN_H, 8, C_DIGITAL_FRAME_EDGE);
 
     // UTC
     tft.setTextColor(C_DIGITAL_ALT_TZ, C_DIGITAL_BG);
-    tft.drawString("UTC", colLeft, row[0]);                   // UTC label
-    tft.drawString(UTC.dateTime(hhmmssFmt), colLeft, row[1]); // UTC time
+    tft.drawString("UTC", colLeft, row[0]);
+    tft.drawString(UTC.dateTime(hhmmssFmt), colLeft, row[1]);
 
     // Local
     tft.setTextColor(C_DIGITAL_LOCAL_TZ, C_DIGITAL_BG);
-    tft.drawString(myTZ.getTimezoneName(), colLeft, row[2]);   // local timezone
-    tft.drawString(myTZ.dateTime(hhmmssFmt), colLeft, row[3]); // local time
+    tft.drawString(myTZ.getTimezoneName(), colLeft, row[2]);
+    tft.drawString(myTZ.dateTime(hhmmssFmt), colLeft, row[3]);
   }
-
-  // Minute update check
-  if (myTZ.minute() != prevMinute)
+  else
   {
-    tft.fillRect(colLeft, row[1], tft.textWidth("88:88"), textHeight, C_DIGITAL_BG);
-    tft.setTextColor(C_DIGITAL_ALT_TZ);
-    tft.drawString(UTC.dateTime(hhmmFmt), colLeft, row[1]);
+    // Partial update: only update seconds (and minutes if needed)
+    // For maximum robustness, you could always redraw the full time,
+    // but for efficiency, only update seconds here.
 
-    tft.fillRect(colLeft, row[3], tft.textWidth("88:88"), textHeight, C_DIGITAL_BG);
-    tft.setTextColor(C_DIGITAL_LOCAL_TZ);
-    tft.drawString(myTZ.dateTime(hhmmFmt), colLeft, row[3]);
-
-    prevMinute = myTZ.minute();
-  }
-
-  // Second update check
-  if (myTZ.second() != prevSecond)
-  {
     // UTC Seconds
     tft.fillRect(ssCol, row[1], ssWidth, textHeight, C_DIGITAL_BG);
     tft.setTextColor(C_DIGITAL_ALT_TZ);
@@ -121,29 +104,10 @@ void digitalClockFrame(bool shouldDrawFrame)
     tft.setTextColor(C_DIGITAL_LOCAL_TZ);
     tft.drawString(myTZ.dateTime("s"), ssCol, row[3]);
 
-    prevSecond = myTZ.second();
+    // Optionally, check if minute changed and update HH:MM if needed
+    // (This is optional if you are sure the display is always correct)
   }
-
   tft.unloadFont();
 }
 
-/**
- * @brief Updates the digital clock display if the seconds value has changed.
- *
- * This function checks if the current second (retrieved from myTZ) is different
- * from the previously stored second. If the second has changed, it updates the
- * stored value and, if the digital clock display is enabled (allowNumberFlip is true),
- * it triggers a refresh of the digital clock display without redrawing the frame.
- */
-void updateDigitalClock()
-{
-  static int oldsec = -1;
-  if (myTZ.second() != oldsec)
-  {
-    oldsec = myTZ.second();
-    if (allowNumberFlip)
-    {                           // user has selected the digital clock
-      digitalClockFrame(false); // do not redraw frame
-    }
-  }
-} // updateDigitalClock()
+// end of digitalClockFrame.cpp
