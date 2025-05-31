@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Karl Berger
- * @date 2025-05-19
+ * @date 2025-05-31
  * @brief Main application for the Magnetic Loop Antenna Controller
  * @details This program initializes communication with sensors and processes input data
  *          from the Weather Underground API, and formats it for display and posting to
@@ -42,8 +42,7 @@
 TickTwo tmrWXcurrent(updateWXcurrent, WX_CURRENT_INTERVAL * 60 * 1000, 0, MILLIS);
 TickTwo tmrWXforecast(getWXforecast, WX_FORECAST_INTERVAL * 60 * 1000, 0, MILLIS);
 TickTwo tmrWXaprs(APRSsendWX, WX_APRS_INTERVAL * 60 * 1000, 0, MILLIS);
-TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
-
+TickTwo tmrSecondTick(updateSequentialFrames, 1000, 0, MILLIS); 
 /*
 ******************************************************
 ********************* SETUP **************************
@@ -51,23 +50,24 @@ TickTwo tmrFrame(updateFrame, SCREEN_DURATION * 1000, 0, MILLIS);
 */
 void setup()
 {
-  Serial.begin(115200);  // serial monitor
-  initSensor();          // initialize indoor sensor
-  setupTFTDisplay();     // initialize TFT display
-  splashScreen();        // stays on until logon is complete
-  logonToRouter();       // connect to WiFi
-  getWXcurrent();        // find latitude & longitude for your weather station
-  setTimeZone();         // set timezone
-  mountFS();             // mount LittleFS and prepare APRS bulletin file
-  dataScreen();          // show configuration data
-  getWXforecast();       // initialize weather data - needs lat/lon from getWXcurrent
-  APRSsendWX();          // post WXcurrent to APRS weather
-  delay(2000);           // delay to show connection info
-  ;                      //! Start TickTwo timers
-  tmrWXcurrent.start();  // timer for current weather
-  tmrWXforecast.start(); // timer for forecasted weather
-  tmrWXaprs.start();     // timer for posting weather to APRS
-  tmrFrame.start();      // timer for sequential screens
+  Serial.begin(115200);         // serial monitor
+  initSensor();                 // initialize indoor sensor
+  setupTFTDisplay();            // initialize TFT display
+  splashScreen();               // stays on until logon is complete
+  logonToRouter();              // connect to WiFi
+  getWXcurrent();               // find latitude & longitude for your weather station
+  setTimeZone();                // set timezone
+  mountFS();                    // mount LittleFS and prepare APRS bulletin file
+  dataScreen();                 // show configuration data
+  getWXforecast();              // initialize weather data - needs lat/lon from getWXcurrent
+  APRSsendWX();                 // post WXcurrent to APRS weather
+  delay(2000);                  // delay to show connection info
+  ;                             //! Start TickTwo timers
+  initializeSequentialFrames(); // initialize sequential frames
+  tmrWXcurrent.start();         // timer for current weather
+  tmrWXforecast.start();        // timer for forecasted weather
+  tmrWXaprs.start();            // timer for posting weather to APRS
+  tmrSecondTick.start();        // timer for second tick clock updates
 } // setup()
 
 /*
@@ -78,15 +78,14 @@ void setup()
 void loop()
 {
   events(); // ezTime events including autoconnect to NTP server
-  updateAnalogClock();
-  updateDigitalClock();
+
   processBulletins();
 
-  //! Update the tasks
+  //! Update the TickTwo timers
   tmrWXcurrent.update();  // get current weather
   tmrWXforecast.update(); // get forecasted weather
   tmrWXaprs.update();     // post weather data to APRS
-  tmrFrame.update();      // change the display frame
+  tmrSecondTick.update(); // update seconds for clock & frame displays
 } // loop()
 
 /*
