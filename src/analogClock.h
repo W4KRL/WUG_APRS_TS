@@ -20,7 +20,6 @@ extern bool allowHandMovement; ///< control analog clock update hand
  * if false, it updates only the changing time digits.
  */
 void analogClockFrame(bool drawFrame);
-void updateAnalogClock();
 
 #endif // ANALOG_CLOCK_H
 // End of file

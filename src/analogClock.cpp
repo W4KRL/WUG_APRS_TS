@@ -21,8 +21,6 @@ void analogClockFrame(bool drawFrame);
 #include "unitConversions.h"  // for temperature conversions
 #include "credentials.h"      // for METRIC_DISPLAY
 
-bool allowHandMovement = false; // global analog clock update hand
-
 void analogClockFrame(bool drawFrame)
 {
   // 11/27/2024 - adapted for TFT_eSPI
@@ -189,15 +187,4 @@ void analogClockFrame(bool drawFrame)
   tft.unloadFont();
 } // analogClockFrame()
 
-void updateAnalogClock()
-{
-  static int oldsec = -1;
-  if (myTZ.second() != oldsec)
-  {
-    oldsec = myTZ.second();
-    if (allowHandMovement)
-    {                          // user has selected the analog clock
-      analogClockFrame(false); // do not redraw frame
-    }
-  }
-} // updateClocks()
+// End of file
