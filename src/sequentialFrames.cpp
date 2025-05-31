@@ -34,7 +34,7 @@ void initializeSequentialFrames()
   // { // increment number of frames
   //   maxFrames++;
   // }
-  maxFrames =  3 + (ANALOG_CLOCK ? 1 : 0) + (DIGITAL_CLOCK ? 1 : 0);
+  maxFrames = 3 + (ANALOG_CLOCK ? 1 : 0) + (DIGITAL_CLOCK ? 1 : 0);
 } // initializeFrames()
 
 /*
@@ -42,49 +42,64 @@ void initializeSequentialFrames()
 ***************** FRAME UPDATE ***********************
 ******************************************************
 */
-void updateSequentialFrames() {
-    static int currentFrame = 1;                 // Tracks which frame is active
-    static int framePersistSeconds = 0;          // Counts seconds this frame has been shown
+void updateSequentialFrames()
+{
+  static int currentFrame = 1;        // Tracks which frame is active
+  static int framePersistSeconds = 0; // Counts seconds this frame has been shown
 
-    const int DATA_FRAME_DURATION = 5; // Duration each frame is shown in seconds
+  const int DATA_FRAME_DURATION = 5; // Duration each frame is shown in seconds
 
-    // Increment persistence counter
-    framePersistSeconds++;
+  // Increment persistence counter
+  framePersistSeconds++;
 
-    // Time to switch frames?
-    if (framePersistSeconds >= DATA_FRAME_DURATION) {
-        currentFrame = (currentFrame % maxFrames) + 1; // Cycle through frames
-        framePersistSeconds = 0;                        // Reset counter
+  // Time to switch frames?
+  if (framePersistSeconds >= DATA_FRAME_DURATION)
+  {
+    currentFrame = (currentFrame % maxFrames) + 1; // Cycle through frames
+    framePersistSeconds = 0;                       // Reset counter
+  }
+
+  // Draw the appropriate frame
+  switch (currentFrame)
+  {
+  case 1:
+    if (framePersistSeconds == 0)
+      firstWXframe();
+    break;
+  case 2:
+    if (framePersistSeconds == 0)
+      secondWXframe();
+    break;
+  case 3:
+    if (framePersistSeconds == 0)
+      almanacFrame();
+    break;
+  case 4:
+    if (ANALOG_CLOCK)
+    {
+      if (framePersistSeconds == 0)
+        analogClockFrame(true); // Full draw on entry
+      else
+        analogClockFrame(false); // Partial update
     }
-
-    // Draw the appropriate frame
-    switch(currentFrame) {
-        case 1:
-            firstWXframe();
-            break;
-        case 2:
-            secondWXframe();
-            break;
-        case 3:
-            almanacFrame();
-            break;
-        case 4:
-            if (ANALOG_CLOCK) {
-                if (framePersistSeconds == 0) analogClockFrame(true); // Full draw on entry
-                else analogClockFrame(false);                         // Partial update
-            } else {
-                if (framePersistSeconds == 0) digitalClockFrame(true); // Full draw on entry
-                else digitalClockFrame(false);                          // Partial update
-            }
-            break;
-        case 5:
-            if (framePersistSeconds == 0) digitalClockFrame(true);     // Full draw on entry
-            else digitalClockFrame(false);                              // Partial update
-            break;
-        default:
-            // Handle unexpected frame numbers, if needed
-            break;
+    else
+    {
+      if (framePersistSeconds == 0)
+        digitalClockFrame(true); // Full draw on entry
+      else
+        digitalClockFrame(false); // Partial update
     }
+    break;
+  case 5:
+    if (framePersistSeconds == 0)
+      digitalClockFrame(true); // Full draw on entry
+    else
+      digitalClockFrame(false); // Partial update
+    break;
+  default:
+    // Handle unexpected frame numbers, if needed
+    break;
+  }
 }
 
 /*
