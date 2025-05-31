@@ -1,7 +1,7 @@
 /**
  * @file sequentialFrames.cpp
  * @author Karl Berger
- * @date 2025-05-29
+ * @date 2025-05-31
  * @brief Sequential frames for the TFT display
  * @details This file contains the functions for displaying sequential frames
  *          on the TFT display. The frames include weather data, almanac data,
@@ -10,74 +10,82 @@
 
 #include "sequentialFrames.h"
 
-#include <Arduino.h>         // for Arduino functions
-#include "tftDisplay.h"      // for TFT display functions
-#include "colors.h"          // for colors
-#include "credentials.h"     // for ANALOG_CLOCK and DIGITAL_CLOCK
-#include "firstWXframe.h"    // for first weather frame
-#include "secondWXframe.h"   // for second weather frame
-#include "almanacFrame.h"    // for almanac frame
-#include "analogClock.h"     // for analog clock frame
-#include "digitalClock.h"    // for digital clock frame
+#include <Arduino.h>       // for Arduino functions
+#include "tftDisplay.h"    // for TFT display functions
+#include "colors.h"        // for colors
+#include "credentials.h"   // for ANALOG_CLOCK and DIGITAL_CLOCK
+#include "firstWXframe.h"  // for first weather frame
+#include "secondWXframe.h" // for second weather frame
+#include "almanacFrame.h"  // for almanac frame
+#include "analogClock.h"   // for analog clock frame
+#include "digitalClock.h"  // for digital clock frame
+
+//! global variables
+bool isClockScreen = false; // true if current frame is a clock frame
+int maxFrames = 3;          // number of display frames w/o clocks
+
+void initializeSequentialFrames()
+{
+  // if (ANALOG_CLOCK)
+  // { // increment number of frames
+  //   maxFrames++;
+  // }
+  // if (DIGITAL_CLOCK)
+  // { // increment number of frames
+  //   maxFrames++;
+  // }
+  maxFrames =  3 + (ANALOG_CLOCK ? 1 : 0) + (DIGITAL_CLOCK ? 1 : 0);
+} // initializeFrames()
 
 /*
 ******************************************************
 ***************** FRAME UPDATE ***********************
 ******************************************************
 */
-void updateFrame()
-{
-  allowHandMovement = false; // supress hand movement until analog clock is displayed
-  allowNumberFlip = false;   // supress numeral change unless digital clock is displayed
+void updateSequentialFrames() {
+    static int currentFrame = 1;                 // Tracks which frame is active
+    static int framePersistSeconds = 0;          // Counts seconds this frame has been shown
 
-  int maxFrames = 3; // number of display frames w/o clocks
-  if (ANALOG_CLOCK)
-  { // increment number of frames
-    maxFrames++;
-  }
-  if (DIGITAL_CLOCK)
-  { // increment number of frames
-    maxFrames++;
-  }
+    const int DATA_FRAME_DURATION = 5; // Duration each frame is shown in seconds
 
-  static int frame = 0; // keep track of last frame between calls
-  frame++;              // increment last frame number
-  if (frame > maxFrames)
-  {
-    frame = 1; // roll back to first frame
-  }
+    // Increment persistence counter
+    framePersistSeconds++;
 
-  switch (frame) // choose frame to display
-  {
-  case 1: // first weather frame
-    firstWXframe();
-    break;
-  case 2: // second weather frame
-    secondWXframe();
-    break;
-  case 3: // almanac frame
-    almanacFrame();
-    break;
-  case 4: // could be digital clock if not analog
-    if (ANALOG_CLOCK)
-    {                           // process analog clock unless not selected
-      analogClockFrame(true);   // draw clock frame
-      allowHandMovement = true; // enable update on secondsChanged() in loop()
+    // Time to switch frames?
+    if (framePersistSeconds >= DATA_FRAME_DURATION) {
+        currentFrame = (currentFrame % maxFrames) + 1; // Cycle through frames
+        framePersistSeconds = 0;                        // Reset counter
     }
-    else
-    {                          // otherwise process digital clock
-      digitalClockFrame(true); // draw clock frame
-      allowNumberFlip = true;  // enable update on secondsChanged() in loop()
+
+    // Draw the appropriate frame
+    switch(currentFrame) {
+        case 1:
+            firstWXframe();
+            break;
+        case 2:
+            secondWXframe();
+            break;
+        case 3:
+            almanacFrame();
+            break;
+        case 4:
+            if (ANALOG_CLOCK) {
+                if (framePersistSeconds == 0) analogClockFrame(true); // Full draw on entry
+                else analogClockFrame(false);                         // Partial update
+            } else {
+                if (framePersistSeconds == 0) digitalClockFrame(true); // Full draw on entry
+                else digitalClockFrame(false);                          // Partial update
+            }
+            break;
+        case 5:
+            if (framePersistSeconds == 0) digitalClockFrame(true);     // Full draw on entry
+            else digitalClockFrame(false);                              // Partial update
+            break;
+        default:
+            // Handle unexpected frame numbers, if needed
+            break;
     }
-    break;                   //
-  case 5:                    // definitely digital
-    digitalClockFrame(true); // draw clock frame
-    allowNumberFlip = true;  // enable update on secondsChanged() in loop()
-    break;
-  default:
-    break;
-  }
-} // updateFrame()
+}
 
 /*
 ******************************************************
