@@ -1,22 +1,22 @@
 /**
  * @file timezone_globals.cpp
  * @brief Timezone management implementation.
- * @date 2025-05-16
+ * @date 2025-05-31
  */
 
 #include "timezone_globals.h"
 
 #include "credentials.h"
 
-Timezone myTZ; // This is the single definition
+Timezone myTZ;
 
 void setTimeZone()
 {
-	waitForSync(); // sync ezTime with a net time server
+	waitForSync();
 	/*
-	 if timezone has not been cached in EEPROM
-	 or user is asking for a new timezone set the timezone
-	 */
+	if timezone has not been cached in EEPROM
+	or user is asking for a new timezone set the timezone
+	*/
 	if (!myTZ.setCache(0) || myTZ.getOlson() != MY_TIMEZONE)
 	{
 		myTZ.setLocation(MY_TIMEZONE);
@@ -26,10 +26,12 @@ void setTimeZone()
 
 /**
  * @brief Converts a 24-hour format hour to a 12-hour format hour.
- * 
+ *
  * @param hour The hour in 24-hour format (0-23).
  * @return int The hour in 12-hour format (1-12).
  */
-int to12HourFormat(int hour) {
-    return (hour == 0) ? 12 : (hour > 12) ? (hour - 12) : hour;
+int to12HourFormat(int hour)
+{
+	return (hour == 0) ? 12 : (hour > 12) ? (hour - 12)
+										  : hour;
 }
