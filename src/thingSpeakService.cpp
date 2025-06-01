@@ -28,7 +28,7 @@
 #define THINGSPEAK_SERVER "api.thingspeak.com" // ThingSpeak Server
 String unitStatus = "";                        // ThingSpeak status global
 
-void postToThingSpeak()
+void postWXtoThingspeak()
 {
   WiFiClient client;
   // assemble and post the data

@@ -20,7 +20,7 @@
 
 extern String unitStatus; // ThingSpeak status
 
-void postToThingSpeak();
+void postWXtoThingspeak();
 
 #endif // THINGSPEAK_SERVICE_H
 // End of file
