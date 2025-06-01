@@ -22,13 +22,56 @@ weather wx; // global weather object
 // !!! DO NOT CHANGE !!!
 // documentation: https://docs.google.com/document/d/1eKCnKXI9xnoMGRRzOL1xPCBihNV2rOet08qpE_gArAY/edit?tab=t.0
 // WX_KEY is in credentials.h
-const String WX_HOST = "https://api.weather.com";
-const String WX_CURRENT = "v2/pws/observations/current";
-const String WX_FORECAST = "v3/wx/forecast/daily/5day";
-const String WX_LANGUAGE = "en-US";
-const String WX_UNITS = "m"; // MUST USE METRIC!!!
-const String WX_FORMAT = "json";
-const String WX_PRECISION = "decimal";
+const String WX_HOST = "https://api.weather.com";        ///< Weather Underground API host
+const String WX_CURRENT = "v2/pws/observations/current"; ///< Current weather observations endpoint
+const String WX_FORECAST = "v3/wx/forecast/daily/5day";  ///< Forecast weather endpoint
+const String WX_LANGUAGE = "en-US";                      ///< Language for the API response
+const String WX_UNITS = "m";                             ///< MUST USE METRIC!!!
+const String WX_FORMAT = "json";                         ///< Format of the API response
+const String WX_PRECISION = "decimal";                   ///< Precision of the API response
+
+/*
+******************************************************
+************* fetch Data and Parse *******************
+******************************************************
+*/
+
+void fetchDataAndParse(String getQuery, JsonDocument &filter, JsonDocument &doc)
+{
+  // HTTP request and parsing logic
+  // by Copilot 12/15/2024
+  WiFiClientSecure client;
+  client.setInsecure();
+  HTTPClient https;
+
+  if (https.begin(client, getQuery))
+  {
+    int httpCode = https.GET();
+    if (httpCode > 0)
+    {
+      if (httpCode == HTTP_CODE_OK)
+      {
+        DeserializationError error = deserializeJson(doc, client, DeserializationOption::Filter(filter));
+        if (error)
+        {
+          DEBUG_PRINT("deserialization failed: ");
+          DEBUG_PRINTLN(error.c_str());
+        }
+      }
+    }
+    else
+    {
+      DEBUG_PRINT("GET error: ");
+      DEBUG_PRINTLN(https.errorToString(httpCode).c_str());
+    }
+    https.end();   // Ensure connection is closed after each request
+    client.stop(); // Explicitly close the client connection
+  }
+  else
+  {
+    DEBUG_PRINTLN("https: can't connect");
+  }
+} // fetchDataAndParse()
 
 /*
 ******************************************************
@@ -39,16 +82,13 @@ void getWXcurrent()
 {
   // Documentation:
   // https://api.weather.com/v2/pws/observations/current?stationId=yourStationID&format=json&units=m&numericPrecision=decimal&apiKey=yourApiKey
-  // XXX DELETE BEFORE RELEASE XXX
-  // http://api.weather.com/v2/pws/observations/current?stationId=KVACENTR126&format=json&units=e&apiKey=c41eb27afef64b6b9eb27afef62b6bed
   // Uses API stream
-  // By Copilot 12/15/2024
-  // solves String capacity problem
 
-  String getQuery = WX_HOST + "/" + WX_CURRENT + "?stationId=" + WX_STATION_ID +
-                    "&format=" + WX_FORMAT + 
+  String getQuery = WX_HOST + "/" + WX_CURRENT + 
+                    "?stationId=" + WX_STATION_ID +
+                    "&format=" + WX_FORMAT +
                     "&units=" + WX_UNITS +
-                    "&numericPrecision=" + WX_PRECISION + 
+                    "&numericPrecision=" + WX_PRECISION +
                     "&apiKey=" + WX_KEY;
 
   JsonDocument filter; // filter to reduce size of JsonDocument
@@ -76,7 +116,7 @@ void getWXcurrent()
     wx.obsUV = observations_0["uv"];                             // UV index
     wx.obsWindDir = observations_0["winddir"];                   // degrees clockwise from North
     wx.obsHumidity = observations_0["humidity"];                 // relative humidity 0 - 100%
-    JsonObject observations_0_metric = observations_0["metric"]; //! all metric values
+    JsonObject observations_0_metric = observations_0["metric"]; //! Program expects all metric values
     wx.obsTemp = observations_0_metric["temp"];                  // Celsius
     wx.obsHeatIndex = observations_0_metric["heatIndex"];        // Celsius valid when temp >+ 18C
     wx.obsDewPt = observations_0_metric["dewpt"];                // Celsius
@@ -93,13 +133,6 @@ void getWXcurrent()
   }
 } // getWXcurrent()
 
-// TickTwo callback function for updating current weather and posting to ThingSpeak
-void updateWXcurrent()
-{
-  getWXcurrent();
-  postToThingSpeak();
-} // updateWXcurrent()
-
 /*
 ******************************************************
 ************** Get Forecast Weather ******************
@@ -115,11 +148,11 @@ void getWXforecast()
   // By Copilot 12/15/2024
   // solves String capacity problem
 
-  String getQuery = WX_HOST + "/" + WX_FORECAST + 
+  String getQuery = WX_HOST + "/" + WX_FORECAST +
                     "?geocode=" + String(wx.obsLat) + "," + String(wx.obsLon) +
-                    "&format=" + WX_FORMAT + 
-                    "&units=" + WX_UNITS + 
-                    "&language="+ WX_LANGUAGE + 
+                    "&format=" + WX_FORMAT +
+                    "&units=" + WX_UNITS +
+                    "&language=" + WX_LANGUAGE +
                     "&apiKey=" + WX_KEY;
 
   JsonDocument filter;
@@ -171,45 +204,4 @@ void getWXforecast()
   DEBUG_PRINTLN(wx.forPhraseShort);
 } // getWXforecast()
 
-/*
-******************************************************
-************* fetch Data and Parse *******************
-******************************************************
-*/
 
-void fetchDataAndParse(String getQuery, JsonDocument &filter, JsonDocument &doc)
-{
-  // HTTP request and parsing logic
-  // by Copilot 12/15/2024
-  WiFiClientSecure client;
-  client.setInsecure();
-  HTTPClient https;
-
-  if (https.begin(client, getQuery))
-  {
-    int httpCode = https.GET();
-    if (httpCode > 0)
-    {
-      if (httpCode == HTTP_CODE_OK)
-      {
-        DeserializationError error = deserializeJson(doc, client, DeserializationOption::Filter(filter));
-        if (error)
-        {
-          DEBUG_PRINT("deserialization failed: ");
-          DEBUG_PRINTLN(error.c_str());
-        }
-      }
-    }
-    else
-    {
-      DEBUG_PRINT("GET error: ");
-      DEBUG_PRINTLN(https.errorToString(httpCode).c_str());
-    }
-    https.end();   // Ensure connection is closed after each request
-    client.stop(); // Explicitly close the client connection
-  }
-  else
-  {
-    DEBUG_PRINTLN("https: can't connect");
-  }
-} // fetchDataAndParse()
