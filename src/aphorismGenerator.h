@@ -17,8 +17,6 @@
  * - **shuffleArray(int *array, int size)**: Shuffles the contents of an integer array to randomize selection order.
  * - **pickAphorism(String aphorismFile, int *lineArray)**: Selects and returns a random aphorism from the specified file
  *   using the shuffled line indices.
- *
- * @note The lineArray and lineCount variables must be defined and initialized in a source file.
  */
 
 #ifndef APHORISM_GENERATOR_H

@@ -1,11 +1,10 @@
 /**
  * @file analogClock.h
  * @author Karl Berger
- * @date 2025-05-29
+ * @date 2025-06-01
 */
 #ifndef ANALOG_CLOCK_H
 #define ANALOG_CLOCK_H
-
 
 extern bool allowHandMovement; ///< control analog clock update hand
 
@@ -17,7 +16,7 @@ extern bool allowHandMovement; ///< control analog clock update hand
  * if set to false, only the changing hand motions will be updated.
  *
  * @param drawFrame If true, draws the analog clock frame; 
- * if false, it updates only the changing time digits.
+ * if false, it updates only the second and minute hands.
  */
 void analogClockFrame(bool drawFrame);
 

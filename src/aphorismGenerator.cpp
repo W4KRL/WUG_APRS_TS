@@ -1,8 +1,22 @@
 /**
  * @file aphorismGenerator.cpp
- * @brief Implementation of aphorism generator functions.
  * @author Karl Berger
- * @date 2025-05-16
+ * @date 2025-06-01
+ * @brief Implementation of aphorism generator functions for the magloop controller project.
+ *
+ * This file provides functions to manage, shuffle, and retrieve aphorisms from a file stored on the device's filesystem.
+ * It includes logic for mounting the filesystem, counting lines in the aphorism file, shuffling the order of aphorisms,
+ * and selecting a random aphorism for display or use elsewhere in the application.
+ *
+ * Key Functions:
+ * - mountFS(): Mounts the filesystem, counts aphorisms, and initializes a shuffled index array.
+ * - shuffleArray(): Implements the Fisher-Yates shuffle to randomize the order of aphorisms.
+ * - pickAphorism(): Retrieves an aphorism from the file based on the shuffled index array.
+ *
+ * Dependencies:
+ * - LittleFS for file storage and access.
+ * - credentials.h for configuration such as the aphorism file name.
+ * - wug_debug.h for debug output.
  */
 
 #include "aphorismGenerator.h"
@@ -12,21 +26,23 @@
 #include "wug_debug.h"       // for debug print
 
 int *lineArray = nullptr; // holds shuffled index to aphorisms
-
-void cleanupLineArray()
-{
-  delete[] lineArray;
-  lineArray = nullptr;
-}
-
 int lineArraySize = 0; // tracks the size of the lineArray
 
-/*
-*******************************************************
-*************** Aphorism File Functions ***************
-*******************************************************
-*/
-
+/**
+ * @brief Mounts the LittleFS filesystem, counts the number of lines in the aphorism file,
+ *        and initializes a shuffled array of line indices for random access.
+ *
+ * This function attempts to mount the LittleFS filesystem. If mounting fails, it logs an error and returns.
+ * Upon successful mounting, it opens the aphorism file specified by APHORISM_FILE in read mode.
+ * It then counts the number of lines in the file to determine how many aphorisms are available.
+ * After counting, it initializes an array of integers (lineArray) with indices corresponding to each line,
+ * and shuffles the array using a Fisher-Yates shuffle algorithm seeded with analog noise for better randomness.
+ * This shuffled array can be used to access aphorisms in a random order without repetition.
+ *
+ * @note Assumes that APHORISM_FILE, lineArray, and lineArraySize are defined elsewhere.
+ * @note Uses DEBUG_PRINT and DEBUG_PRINTLN macros for logging.
+ * @note Requires LittleFS and random number generation to be available.
+ */
 void mountFS()
 {
   if (!LittleFS.begin())
@@ -36,8 +52,6 @@ void mountFS()
   }
   DEBUG_PRINTLN("FS mounted");
 
-  // Ensure previous memory is cleaned up before allocating new memory
-  // cleanupLineArray();
   File file = LittleFS.open(APHORISM_FILE, "r");
   if (!file)
   {
@@ -68,7 +82,19 @@ void mountFS()
   }
 } // mountFS()
 
-/***************** Shuffle Array **********************/
+/**
+ * @brief Shuffles the elements of an integer array in place using the Fisher-Yates algorithm.
+ *
+ * This function randomly permutes the elements of the given array, ensuring each possible
+ * permutation is equally likely. It iterates from the end of the array to the beginning,
+ * swapping each element with another randomly selected element that comes before it (or itself).
+ *
+ * @param array Pointer to the integer array to be shuffled.
+ * @param size The number of elements in the array.
+ *
+ * @note Uses the random() function to generate random indices. For improved randomness,
+ *       consider seeding the random number generator with randomSeed() before calling this function.
+ */
 void shuffleArray(int *array, int size)
 {
   // Fisher-Yates shuffle algorithm
@@ -87,7 +113,20 @@ void shuffleArray(int *array, int size)
   }
 } // shuffleArray()
 
-/*************** pickAphorism *******************/
+/**
+ * @brief Picks an aphorism from a file based on a sequence of line numbers.
+ *
+ * This function retrieves a specific line (aphorism) from a file stored in the filesystem,
+ * using the provided array of line numbers. It maintains an internal static index to cycle
+ * through the line numbers on each call. If the end of the array is reached (indicated by -1),
+ * the index resets to the beginning. The function attempts up to 10 times to read the desired
+ * line from the file, returning an empty string on failure.
+ *
+ * @param fileName   The name of the file containing aphorisms, one per line.
+ * @param lineArray  Pointer to an array of integers specifying the line numbers to pick.
+ *                   The array should be terminated with -1.
+ * @return           The aphorism string from the specified line, or an empty string on failure.
+ */
 String pickAphorism(String fileName, int *lineArray)
 {
   static int j = 0; // Static variable to retain value between function calls
@@ -138,3 +177,5 @@ String pickAphorism(String fileName, int *lineArray)
   j = 0;     // Reset j if no valid aphorism is found
   return ""; // Return empty string if unsuccessful
 }
+
+// End of file

@@ -25,8 +25,8 @@
 // Asia: asia.aprs2.net
 // Africa: africa.aprs2.net
 // Oceania: apan.aprs2.net
-#define APRS_SERVER "noam.aprs2.net"				   // recommended for North America
-#define APRS_DEVICE_NAME "https://w4krl.com/iot-kits/" // link to my website
+const char* APRS_SERVER ="noam.aprs2.net";				   // recommended for North America
+const char* APRS_DEVICE_NAME ="https://w4krl.com/iot-kits/"; // link to my website
 #define APRS_SOFTWARE_NAME "D1S-VEVOR"				   // unit ID
 #define APRS_SOFTWARE_VERS FW_VERSION				   // FW version
 #define APRS_PORT 14580								   // do not change port
