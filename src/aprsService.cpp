@@ -145,7 +145,7 @@ String APRSformatWeather()
 } // APRSformatWeather()
 
 // ********** weather callback ********
-void APRSsendWX()
+void postWXtoAPRS()
 {
 	// callback for weather
 	postToAPRS(APRSformatWeather());
@@ -248,8 +248,8 @@ void processBulletins(){
     APRSsendBulletin(bulletinText, "M"); // send morning bulletin
     amBulletinSent = true;               // mark it sent
 
-    unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
-    postToThingSpeak();
+    // unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
+    // postToThingSpeak();
     unitStatus = "";
   }
   
@@ -261,8 +261,8 @@ void processBulletins(){
     pmBulletinSent = true;               // mark it sent
 
     unitStatus = myTZ.dateTime("d M ~P~M ") + bulletinText;
-    postToThingSpeak();
-    unitStatus = "";
+    // postToThingSpeak();
+    // unitStatus = "";
   }
 
   //? Reset the bulletin flags at midnight if either is true

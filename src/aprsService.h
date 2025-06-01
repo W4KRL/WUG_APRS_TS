@@ -22,7 +22,8 @@ void postToAPRS(String message);
  * @return Formatted weather string.
  */
 String APRSformatWeather();
-void APRSsendWX();
+
+void postWXtoAPRS();
 
 
 /**
