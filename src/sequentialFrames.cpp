@@ -26,14 +26,6 @@ int maxFrames = 3;          // number of display frames w/o clocks
 
 void initializeSequentialFrames()
 {
-  // if (ANALOG_CLOCK)
-  // { // increment number of frames
-  //   maxFrames++;
-  // }
-  // if (DIGITAL_CLOCK)
-  // { // increment number of frames
-  //   maxFrames++;
-  // }
   maxFrames = 3 + (ANALOG_CLOCK ? 1 : 0) + (DIGITAL_CLOCK ? 1 : 0);
 } // initializeFrames()
 
