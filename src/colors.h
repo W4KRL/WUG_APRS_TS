@@ -74,7 +74,8 @@ extern const int C_ANALOG_FRAME_BG;
 extern const int C_ANALOG_DIAL_BG;
 extern const int C_ANALOG_TZ;      // timezone & AM/PM text
 extern const int C_ANALOG_DIAL_EDGE;
-extern const int C_ANALOG_DIAL_NUMERALS;
+extern const int C_ANALOG_AM_NUMERALS;
+extern const int C_ANALOG_PM_NUMERALS;
 extern const int C_ANALOG_DIAL_TICKS;
 extern const int C_ANALOG_SEC_HAND;
 extern const int C_ANALOG_MIN_HAND;
