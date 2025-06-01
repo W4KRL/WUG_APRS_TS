@@ -33,6 +33,7 @@ extern const String TS_CHANNEL;
 // Weather update intervals (note minutes)
 extern const unsigned int WX_CURRENT_INTERVAL;  // minutes between current weather requests (Should be >= 1)
 extern const unsigned int WX_FORECAST_INTERVAL; // minutes between forecast requests
+extern const unsigned int TS_POST_INTERVAL; // minutes between posting to ThingSpeak
 extern const unsigned int WX_APRS_INTERVAL;     // minutes between posting weather data to APRS (Must be >= 5)
 extern const unsigned int SCREEN_DURATION;      // display frame interval in !!!seconds!!!
 
