@@ -1,24 +1,24 @@
 /**
  * @file aphorismGenerator.h
- * @brief Aphorism generator header.
- * @details This file contains the declarations for functions to generate and retrieve 
- * aphorisms stored in a text file on the LittleFS filesystem. It includes logic for mounting
- * the filesystem, counting lines in the aphorism file, shuffling the order of aphorisms,
- * and selecting a random aphorism for use.
  * @author Karl Berger
- * @date 2025-05-16
+ * @date 2025-06-01
+ * @brief Header file for aphorism generator functions and variables.
  *
- * @param lineCount
- *      Number of aphorisms in the file.
- *      Cleans up and frees memory used by the line array.
- * @fn void mountFS()
- *      Mounts the LittleFS filesystem.
- * @fn void shuffleArray(int *array, int size)
- *      Shuffles the given array of indices.
- *      @param array Pointer to the array to shuffle.
- *      @param size Size of the array.
- * @fn String pickAphorism(String aphorismFile, int *lineArray)
- *      Picks an aphorism from the file using the shuffled line array.
+ * @details This header declares functions and external variables used for generating and selecting
+ * aphorisms from a designated file. The module supports mounting a filesystem, shuffling an array,
+ * and selecting an aphorism from a file for display or further use.
+ *
+ * @section variables Variables
+ * - **lineArray**: A pointer to an integer array used to store line indices for aphorism selection.
+ * - **lineCount**: An integer representing the number of lines/aphorisms in the file.
+ *
+ * @section functions Functions
+ * - **mountFS()**: Mounts the filesystem for access to aphorism files.
+ * - **shuffleArray(int *array, int size)**: Shuffles the contents of an integer array to randomize selection order.
+ * - **pickAphorism(String aphorismFile, int *lineArray)**: Selects and returns a random aphorism from the specified file
+ *   using the shuffled line indices.
+ *
+ * @note The lineArray and lineCount variables must be defined and initialized in a source file.
  */
 
 #ifndef APHORISM_GENERATOR_H
@@ -29,49 +29,10 @@
 extern int *lineArray;
 extern int lineCount;
 
-/**
- * @brief Cleans up the dynamically allocated line array.
- * @details
- * Deletes the memory allocated for the shuffled index array of aphorisms
- * and resets the pointer to nullptr.
- */
-void cleanupLineArray();
-
-/**
- * @brief Mounts the LittleFS filesystem and initializes the aphorism index array.
- * @details
- * - Mounts the filesystem.
- * - Counts the number of lines (aphorisms) in the aphorism file.
- * - Allocates and shuffles an array of indices for random aphorism selection.
- * @param lineCount
- *      Number of aphorisms in the file.
- */
 void mountFS();
-
-/**
- * @brief Shuffles an integer array using the Fisher-Yates algorithm.
- * @param array Pointer to the integer array to shuffle.
- * @param size Number of elements in the array.
- * @details
- * Randomly permutes the elements of the array to ensure uniform distribution.
- */
 void shuffleArray(int *array, int size);
-
-/**
- * @brief Picks a random aphorism from the specified file.
- * @param fileName Name of the file containing aphorisms.
- * @param lineArray Pointer to the shuffled array of line indices.
- *      Holds shuffled indices to aphorisms.
- * @return String containing the selected aphorism, or an empty string on failure.
- * @details
- * - Uses a static index to iterate through the shuffled line array.
- * - Opens the file and retrieves the aphorism at the target line.
- * - Resets the index if the end of the array is reached.
- * - Limits the number of attempts to prevent infinite loops.
- * - Limits the number of attempts to prevent infinite loops by using a predefined maximum attempt count.
-String pickAphorism(String fileName, int *lineArray);
- */
 String pickAphorism(String aphorismFile, int *lineArray);
 
 #endif // APHORISM_GENERATOR_H
 // End of file
+
