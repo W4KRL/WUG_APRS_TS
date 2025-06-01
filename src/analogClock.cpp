@@ -1,12 +1,12 @@
 /**
  * @file analogClock.cpp
+ * @author Karl Berger
+ * @date 2025-06-01
  * @brief Analog clock display functions.
  * @details  This file contains the implementation of functions to render an analog clock
  * on a TFT display, including drawing the clock face, numerals, tick marks,
  * hands (second, minute, hour), and additional information such as timezone,
  * AM/PM indicator, and indoor sensor data (temperature and humidity).
- * @author Karl Berger
- * @date 2025-05-14
  */
 
 void analogClockFrame(bool drawFrame);
@@ -15,21 +15,24 @@ void analogClockFrame(bool drawFrame);
 
 #include <Arduino.h>          // Arduino functions
 #include "tftDisplay.h"       // for TFT display functions
+#include <Adafruit_GFX.h>     // for fillTriangle and other graphics functions
 #include "timezone_globals.h" // for getTimezoneName(), to12HourFormat()
 #include "colors.h"           // for colors
-#include "indoorSensor.h"     // for indoor sensor data
-#include "unitConversions.h"  // for temperature conversions
-#include "credentials.h"      // for METRIC_DISPLAY
+
+#define C_ANALOG_PM_NUMERALS RED // Define constant for PM numeral color
+#include "indoorSensor.h"        // for indoor sensor data
+#include "unitConversions.h"     // for temperature conversions
+#include "credentials.h"         // for METRIC_DISPLAY
 
 void analogClockFrame(bool drawFrame)
 {
-  // 11/27/2024 - adapted for TFT_eSPI
   const int CENTER_X = SCREEN_W2;
   const int CENTER_Y = SCREEN_H2;
   //! scale dimensions from dial radius
   const int DIAL_RADIUS = SCREEN_H2;                 // outer clock dial
-  const int NUMERAL_R = DIAL_RADIUS - 6;             // ring for numerals
-  const int OUTER_TICK_R = NUMERAL_R - 6;            // outer ring for ticks
+  const int AM_NUMERAL_R = DIAL_RADIUS - 6;          // ring for AM numerals
+  const int PM_NUMERAL_R = DIAL_RADIUS - 27;         // ring for PM numerals
+  const int OUTER_TICK_R = AM_NUMERAL_R - 6;         // outer ring for ticks
   const int MIN_TICK_R = OUTER_TICK_R - 3;           // inner ring for minute ticks
   const int INNER_TICK_R = MIN_TICK_R - 3;           // inner ring for hour ticks
   const int MIN_HAND = INNER_TICK_R;                 // minute hand is the longest
@@ -50,7 +53,6 @@ void analogClockFrame(bool drawFrame)
     tft.drawRoundRect(0, 0, SCREEN_W, SCREEN_H, 8, C_ANALOG_FRAME_EDGE);
     tft.fillCircle(CENTER_X, CENTER_Y, DIAL_RADIUS, C_ANALOG_DIAL_BG);
     tft.drawCircle(CENTER_X, CENTER_Y, DIAL_RADIUS + 1, C_ANALOG_DIAL_EDGE);
-    tft.setTextColor(C_ANALOG_DIAL_NUMERALS);
 
     //! add minute & hour tick marks
     for (int minTick = 1; minTick < 61; minTick++)
@@ -61,10 +63,17 @@ void analogClockFrame(bool drawFrame)
       {
         rad = DEGtoRAD(deg);
         tickR = INNER_TICK_R;
-        // place numeral centered on numeral circle
-        x1 = (CENTER_X + (sin(rad) * NUMERAL_R));
-        y1 = (CENTER_Y - (cos(rad) * NUMERAL_R));
+        // place numerals centered on AM numeral circle
+        x1 = (CENTER_X + (sin(rad) * AM_NUMERAL_R));
+        y1 = (CENTER_Y - (cos(rad) * AM_NUMERAL_R));
+        tft.setTextColor(C_ANALOG_AM_NUMERALS);
         tft.drawString(String(minTick / 5), x1, y1);
+
+        // place PM numerals centered on PM numeral circle
+        tft.setTextColor(C_ANALOG_PM_NUMERALS);
+        x1 = (CENTER_X + (sin(rad) * PM_NUMERAL_R));
+        y1 = (CENTER_Y - (cos(rad) * PM_NUMERAL_R));
+        tft.drawString(String((minTick) / 5 + 12), x1, y1); // add 12 for PM numerals
       }
       //! draw tick
       rad = DEGtoRAD(deg); // Convert degrees to radians
@@ -81,9 +90,7 @@ void analogClockFrame(bool drawFrame)
     tft.setTextDatum(TR_DATUM); // flush right
     tft.drawString((myTZ.hour() > 12) ? "PM" : "AM", 126, 0);
 
-    //! print indoor temperature & humidity
-    // show only if there is a sensor and no digital clock
-    if (!DIGITAL_CLOCK && indoorSensor == true)
+    if (!DIGITAL_CLOCK && indoorSensor) // if indoor sensor exists & no digital clock
     {
       readSensor();
       tft.setTextColor(C_ANALOG_INDOOR, C_ANALOG_DIAL_BG); // print over dial
@@ -92,7 +99,7 @@ void analogClockFrame(bool drawFrame)
       tft.drawString(temp, CENTER_X, CENTER_Y - 30);
       tft.drawString(String(indoor.humid, 0) + "%", CENTER_X, CENTER_Y + 15);
     }
-  }
+  } // if(drawFrame)
 
   //! update hands. Process second hand, minute hand, hour hand in this order
   //? **** Process second hand ****
@@ -103,15 +110,15 @@ void analogClockFrame(bool drawFrame)
   //! erase previous second hand
   x3 = (CENTER_X + (sin(oldSrad) * SEC_HAND));
   y3 = (CENTER_Y - (cos(oldSrad) * SEC_HAND));
-  tft.drawLine(CENTER_X, CENTER_Y, x3, y3, C_ANALOG_DIAL_BG);
-  tft.fillCircle(x3, y3, SEC_DOT_R, C_ANALOG_DIAL_BG);
-  oldSrad = rad; // save current radians for erase next time
+  tft.drawLine(CENTER_X, CENTER_Y, x3, y3, C_ANALOG_DIAL_BG); // erase second hand line
+  tft.fillCircle(x3, y3, SEC_DOT_R, C_ANALOG_DIAL_BG);        // erase second hand pointer
+  oldSrad = rad;                                              // save current radians for erase next time
 
   //! draw new second hand
   x3 = (CENTER_X + (sin(rad) * SEC_HAND));
   y3 = (CENTER_Y - (cos(rad) * SEC_HAND));
-  tft.drawLine(CENTER_X, CENTER_Y, x3, y3, C_ANALOG_SEC_HAND);
-  tft.fillCircle(x3, y3, SEC_DOT_R, C_ANALOG_SEC_HAND);
+  tft.drawLine(CENTER_X, CENTER_Y, x3, y3, C_ANALOG_SEC_HAND); // draw second hand line
+  tft.fillCircle(x3, y3, SEC_DOT_R, C_ANALOG_SEC_HAND);        // draw second hand pointer
 
   //! **** Process minute hand ****
   deg = myTZ.minute() * 6;    // each minute advances 6 degrees
@@ -149,7 +156,7 @@ void analogClockFrame(bool drawFrame)
   //? Must draw hour hand last as it is shortest hand
   int dialHour = to12HourFormat(myTZ.hour()); // convert to 12-hour format
   // 30 degree increments + adjust for minutes
-  // the Swiss prefer incrementing the minute hand in minute steps
+  // Increment the minute hand in precise minute steps for better accuracy
   deg = dialHour * 30 + int((myTZ.minute() / 12) * 6);
   static float oldHdeg = deg;
   rad1 = DEGtoRAD(deg + 90);
@@ -184,7 +191,6 @@ void analogClockFrame(bool drawFrame)
   tft.fillCircle(CENTER_X, CENTER_Y, HUB_R, C_ANALOG_HUB);
   tft.fillCircle(CENTER_X, CENTER_Y, 1, C_ANALOG_DIAL_BG);
 
-  tft.unloadFont();
 } // analogClockFrame()
 
 // End of file
