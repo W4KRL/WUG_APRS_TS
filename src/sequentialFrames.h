@@ -13,7 +13,7 @@
 
 extern bool isClockScreen; ///< true if current frame is a clock frame
 
-void initializeSequentialFrames();								 ///< initialize the number of frames
+void initSequentialFrames();								 ///< initialize the number of frames
 void updateSequentialFrames();									 ///< update the sequential frames
 void drawFramePanels(int top_background, int bottom_background); ///< draws upper and lower panels for the frame
 

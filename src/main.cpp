@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Karl Berger
- * @date 2025-05-31
+ * @date 2025-06-02
  * @brief Main application for the Magnetic Loop Antenna Controller
  * @details This program initializes communication with sensors and processes input data
  *          from the Weather Underground API, and formats it for display and posting to
@@ -9,6 +9,7 @@
  * @todo read day/night indicator and choose json data accordingly
  * @todo add APRS bulletin for sunrise/sunset
  * @todo test WUG API responses for absence. Do not update WX data if response missing
+ * @todo add WiFiManager for configuration or SCPI commands
  *
  * @see [GitHub Repository](https://github.com/W4KRL/WUG_APRS_TS)
  */
@@ -44,6 +45,7 @@ TickTwo tmrGetWXforecast(getWXforecast, WX_FORECAST_INTERVAL * 60 * 1000, 0, MIL
 TickTwo tmrPostWXtoAPRS(postWXtoAPRS, WX_APRS_INTERVAL * 60 * 1000, 0, MILLIS);
 TickTwo tmrPostWXtoThingspeak(postWXtoThingspeak, TS_POST_INTERVAL * 60 * 1000, 0, MILLIS);
 TickTwo tmrSecondTick(updateSequentialFrames, 1000, 0, MILLIS);
+
 /*
 ******************************************************
 ********************* SETUP **************************
@@ -63,8 +65,8 @@ void setup()
   getWXforecast();               // initialize weather data - needs lat/lon from getWXcurrent
   postWXtoAPRS();                // post WXcurrent to APRS weather
   delay(2000);                   // delay to show connection info
-  ;                              //! Start TickTwo timers
-  initializeSequentialFrames();  // initialize sequential frames
+  initSequentialFrames();        // initialize sequential frames
+                                 //! Start TickTwo timers
   tmrGetWXcurrent.start();       // timer for current weather
   tmrGetWXforecast.start();      // timer for forecasted weather
   tmrPostWXtoThingspeak.start(); // timer for posting to ThingSpeak
@@ -79,16 +81,14 @@ void setup()
 */
 void loop()
 {
-  events(); // ezTime events including autoconnect to NTP server
-
-  processBulletins();
-
-  //! Update the TickTwo timers
-  tmrGetWXcurrent.update();  // get current weather
-  tmrPostWXtoThingspeak.update();    // post selected current weather to ThingSpeak
-  tmrPostWXtoAPRS.update();  // post selected weather data to APRS
-  tmrGetWXforecast.update(); // get forecasted weather for display
-  tmrSecondTick.update();    // update seconds for clock & frame displays
+  events();                       // ezTime events including autoconnect to NTP server
+  processBulletins();             // process APRS bulletins
+                                  //! Update the TickTwo timers
+  tmrGetWXcurrent.update();       // get current weather
+  tmrPostWXtoThingspeak.update(); // post selected current weather to ThingSpeak
+  tmrPostWXtoAPRS.update();       // post selected weather data to APRS
+  tmrGetWXforecast.update();      // get forecasted weather for display
+  tmrSecondTick.update();         // update seconds for clock & frame displays
 } // loop()
 
 /*

@@ -24,7 +24,7 @@
 bool isClockScreen = false; // true if current frame is a clock frame
 int maxFrames = 3;          // number of display frames w/o clocks
 
-void initializeSequentialFrames()
+void initSequentialFrames()
 {
   maxFrames = maxFrames + (ANALOG_CLOCK ? 1 : 0) + (DIGITAL_CLOCK ? 1 : 0);
 } // initializeFrames()
