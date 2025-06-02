@@ -22,7 +22,7 @@
 #ifndef APHORISM_GENERATOR_H
 #define APHORISM_GENERATOR_H
 
-#include <Arduino.h>
+#include <Arduino.h> // for String class
 
 extern int *lineArray;
 extern int lineCount;

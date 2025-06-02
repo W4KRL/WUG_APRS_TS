@@ -1,12 +1,15 @@
 /**
  * @file timezone_globals.cpp
+ * @author Karl W. Berger
+ * @date 2025-06-02
  * @brief Timezone management implementation.
- * @date 2025-05-31
  */
 
 #include "timezone_globals.h"
 
-#include "credentials.h"
+#include <Arduino.h>	 // Arduino functions
+#include <ezTime.h>		 // ezTime library for timezone handling
+#include "credentials.h" // for MY_TIMEZONE
 
 Timezone myTZ;
 

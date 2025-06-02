@@ -1,7 +1,7 @@
 /**
  * @file aphorismGenerator.cpp
  * @author Karl Berger
- * @date 2025-06-01
+ * @date 2025-06-02
  * @brief Implementation of aphorism generator functions for the magloop controller project.
  *
  * This file provides functions to manage, shuffle, and retrieve aphorisms from a file stored on the device's filesystem.
@@ -21,12 +21,13 @@
 
 #include "aphorismGenerator.h"
 
+#include <Arduino.h>     // Arduino functions
 #include <LittleFS.h>    // [builtin]
 #include "credentials.h" // Wi-Fi and weather station credentials
-#include "wug_debug.h"       // for debug print
+#include "wug_debug.h"   // for debug print
 
 int *lineArray = nullptr; // holds shuffled index to aphorisms
-int lineArraySize = 0; // tracks the size of the lineArray
+int lineArraySize = 0;    // tracks the size of the lineArray
 
 /**
  * @brief Mounts the LittleFS filesystem, counts the number of lines in the aphorism file,

@@ -1,9 +1,9 @@
 /**
  * @file unitConversions.h
+ * @author Karl W. Berger
+ * @date 2025-06-02
  * @brief Unit conversion header for functions
  * @details This is the header file for unit conversion functions.
- * @author Karl Berger
- * @date 2025-05-13
  */
 
 #ifndef UNIT_CONVERSION_H

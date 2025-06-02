@@ -2,11 +2,12 @@
  * @file aprsService.cpp
  * @brief Contains implementation functions for posting weather data and bulletins to APRS-IS.
  * @author Karl Berger
- * @date 2025-05-14
+ * @date 2025-06-02
  */
 
 #include "aprsService.h"
 
+#include <Arduino.h>		 // Arduino functions
 #include "credentials.h"	 // Wi-Fi and weather station credentials
 #include <WiFiClient.h>		 // APRS connection
 #include "weatherService.h"	 // weather data

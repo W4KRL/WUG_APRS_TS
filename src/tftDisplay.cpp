@@ -1,13 +1,15 @@
 /**
  * @file tftDisplay.cpp
+ * @author Karl W. Berger
+ * @date 2025-06-02
  * @brief TFT display implementation
  */
 
 #include "tftDisplay.h"
 
-#include <Arduino.h>
-#include "Roboto_Bold_12.h"
-#include "Roboto_Bold_16.h"
+#include <Arduino.h> // for Arduino functions
+#include "Roboto_Bold_12.h" // for Roboto Bold 12 font
+#include "Roboto_Bold_16.h" // for Roboto Bold 16 font
 
 // Display configuration
 // Display dimensions (initialized in setup)
@@ -18,7 +20,7 @@ const int USB_UP = 3;
 const int LEFT_COL = 6;
 const int RIGHT_COL = 125;
 const int HEADER_RAD = 8;
-const int HEADER_Y = 37;
+const int HEADER_Y = 36;
 
 const int FRAME_ORIENTATION = USB_LEFT;
 

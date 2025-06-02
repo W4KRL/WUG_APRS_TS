@@ -1,7 +1,7 @@
 /**
  * @file weatherService.cpp
  * @author Karl Berger
- * @date 2025-05-29
+ * @date 2025-06-02
  * @brief Weather service implementation
  * @details This file contains the functions for fetching weather data from Weather Underground
  *          and posting it to the display, ThingSpeak, and APRS
@@ -9,6 +9,7 @@
 
 #include "weatherService.h"
 
+#include <Arduino.h>           // Arduino functions
 #include "credentials.h"       // Wi-Fi and weather station credentials
 #include <ESP8266HTTPClient.h> // [builtin] for http and https
 #include <WiFiClientSecure.h>  // [builtin] for https
@@ -84,7 +85,7 @@ void getWXcurrent()
   // https://api.weather.com/v2/pws/observations/current?stationId=yourStationID&format=json&units=m&numericPrecision=decimal&apiKey=yourApiKey
   // Uses API stream
 
-  String getQuery = WX_HOST + "/" + WX_CURRENT + 
+  String getQuery = WX_HOST + "/" + WX_CURRENT +
                     "?stationId=" + WX_STATION_ID +
                     "&format=" + WX_FORMAT +
                     "&units=" + WX_UNITS +
@@ -203,5 +204,3 @@ void getWXforecast()
   DEBUG_PRINT("\tPhrase Short:\t");
   DEBUG_PRINTLN(wx.forPhraseShort);
 } // getWXforecast()
-
-

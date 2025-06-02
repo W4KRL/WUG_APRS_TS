@@ -6,7 +6,7 @@
 #ifndef ANALOG_CLOCK_H
 #define ANALOG_CLOCK_H
 
-extern bool allowHandMovement; ///< control analog clock update hand
+#include <Arduino.h>          // Arduino functions
 
 /**
  * @brief Draws or clears the analog clock frame.

@@ -1,13 +1,15 @@
 /**
  * @file unitConversions.cpp
+ * @author Karl W. Berger
+ * @date 2025-06-02
  * @brief Unit conversion functions.
  * @details This file contains the functions for unit conversions.
- * @author Karl Berger
- * @date 2025-05-13
  * @note This file must reside in the same Arduino directory as the main sketch.
  */
 
 #include "unitConversions.h" // unit conversion functions
+
+#include <Arduino.h> // for Arduino functions
 
 float CtoF(float tempC) // convert celsius to fahrenheit
 {

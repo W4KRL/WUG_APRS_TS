@@ -1,7 +1,7 @@
 /**
  * @file lunation.cpp
  * @author Karl W. Berger
- * @date 2025-05-28
+ * @date 2025-06-02
  * @brief Functions for calculating and displaying the lunar phase.
  *
  * This file contains functions to:
@@ -21,6 +21,7 @@
  */
 #include "lunation.h"	
 
+#include <Arduino.h>
 #include "tftDisplay.h"	
 #include "timezone_globals.h"
 #include "colors.h"

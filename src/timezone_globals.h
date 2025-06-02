@@ -1,5 +1,7 @@
 /**
  * @file timezone_globals.h
+ * @author Karl W. Berger
+ * @date 2025-06-02
  * @brief Global variables and declarations for timezone management.
  */
 
@@ -7,12 +9,11 @@
 #define TIMEZONE_GLOBALS_H
 
 #include <Arduino.h>
+#include <ezTime.h> // for Timezone		
 
 #ifdef DEBUG
 #undef DEBUG // Prevent conflicts with other libraries
 #endif
-
-#include <ezTime.h> // for Timezone
 
 /**
  * @brief Externally declared Timezone object representing the application's current timezone.

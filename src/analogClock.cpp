@@ -9,23 +9,21 @@
  * AM/PM indicator, and indoor sensor data (temperature and humidity).
  */
 
-void analogClockFrame(bool drawFrame);
-
 #include "analogClock.h"
 
 #include <Arduino.h>          // Arduino functions
+#include <TFT_eSPI.h>         // TFT display library
 #include "tftDisplay.h"       // for TFT display functions
 #include <Adafruit_GFX.h>     // for fillTriangle and other graphics functions
 #include "timezone_globals.h" // for getTimezoneName(), to12HourFormat()
 #include "colors.h"           // for colors
-
-#define C_ANALOG_PM_NUMERALS RED // Define constant for PM numeral color
-#include "indoorSensor.h"        // for indoor sensor data
-#include "unitConversions.h"     // for temperature conversions
-#include "credentials.h"         // for METRIC_DISPLAY
+#include "indoorSensor.h"     // for indoor sensor data
+#include "unitConversions.h"  // for temperature conversions
+#include "credentials.h"      // for METRIC_DISPLAY
 
 void analogClockFrame(bool drawFrame)
 {
+  //! move constants for clock dimensions to an initialization section
   const int CENTER_X = SCREEN_W2;
   const int CENTER_Y = SCREEN_H2;
   //! scale dimensions from dial radius
@@ -102,6 +100,7 @@ void analogClockFrame(bool drawFrame)
   } // if(drawFrame)
 
   //! update hands. Process second hand, minute hand, hour hand in this order
+
   //? **** Process second hand ****
   deg = myTZ.second() * 6; // each second advances 6 degrees
   rad = DEGtoRAD(deg);     // Convert degrees to radians
