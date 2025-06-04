@@ -44,7 +44,9 @@ void analogClockFrame(bool drawFrame)
   float degf;                  // degrees float
   float rad, rad1, rad2, rad3; // radians
 
-  //! draw clock face first time only to speed up graphics
+  /*******************************************************
+   *           Draw clock face first time only           *
+   *******************************************************/
   if (drawFrame)
   {
     tft.setFreeFont(SmallBold);
@@ -74,7 +76,7 @@ void analogClockFrame(bool drawFrame)
         tft.setTextColor(C_ANALOG_PM_NUMERALS);
         tft.drawString(String((minTick) / 5 + 12), x1, y1); // add 12 for PM numerals
       }
-      // draw tick
+      // draw tick marks
       rad = DEGtoRAD(deg); // Convert degrees to radians
       x2 = (CENTER_X + (sin(rad) * OUTER_TICK_R));
       y2 = (CENTER_Y - (cos(rad) * OUTER_TICK_R));
@@ -101,8 +103,13 @@ void analogClockFrame(bool drawFrame)
   } // if(drawFrame)
 
   //! update hands. Process second hand, minute hand, hour hand in this order
+  /*******************************************************
+   *          Update second, minute & hour hands         *
+   *******************************************************/
 
-  //! **** Process second hand ****
+  /*******************************************************
+   *                Process second hand                  *
+   *******************************************************/
   deg = myTZ.second() * 6; // each second advances 6 degrees
   rad = DEGtoRAD(deg);     // Convert degrees to radians
   static float oldSrad;    // save current radians for erase
@@ -133,7 +140,9 @@ void analogClockFrame(bool drawFrame)
   tft.fillCircle(x3, y3, SEC_DOT_R, C_ANALOG_SEC_HAND);        // draw second hand pointer
   oldSrad = rad;                                               // save current radians for erase
 
-  //! **** Process minute hand ****
+  /*******************************************************
+   *                Process minute hand                  *
+   *******************************************************/
   degf = myTZ.minute() * 6 + myTZ.second() * 0.1; // add 0.1 degree for each second
   rad1 = DEGtoRAD(degf + 90);                     // base of triangular hand
   rad2 = DEGtoRAD(degf - 90);                     // base of triangular hand
@@ -182,12 +191,11 @@ void analogClockFrame(bool drawFrame)
   y3 = (CENTER_Y - (cos(rad3) * MIN_HAND));
   tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_MIN_HAND);
 
-  //! **** Process hour hand ****
-  //! Must draw hour hand last as it is shortest hand
+  /*******************************************************
+   *                Process hour hand                  *
+   *******************************************************/
   int dialHour = to12HourFormat(myTZ.hour()); // convert to 12-hour format
   static float oldHdegf;                      // save current degrees for triangle
-  // 30 degree increments + adjust for minutes
-  // Increment the minute hand in precise minute steps for better accuracy
   degf = dialHour * 30 + 0.1 * myTZ.minute(); // each hour advances 30 degrees, add 0.1 degree for each minute);
   rad1 = DEGtoRAD(degf + 90);
   rad2 = DEGtoRAD(degf - 90);
@@ -219,7 +227,6 @@ void analogClockFrame(bool drawFrame)
     x3 = (CENTER_X + (sin(oldHrad3) * HOUR_HAND));
     y3 = (CENTER_Y - (cos(oldHrad3) * HOUR_HAND));
     tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_DIAL_BG);
-    oldHdegf = degf; // save current degrees for hour hand
   }
   //! draw new hour hand
   x1 = (CENTER_X + (sin(rad1) * HUB_R));
@@ -229,6 +236,7 @@ void analogClockFrame(bool drawFrame)
   x3 = (CENTER_X + (sin(rad3) * HOUR_HAND));
   y3 = (CENTER_Y - (cos(rad3) * HOUR_HAND));
   tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_HOUR_HAND);
+  oldHdegf = degf; // save current degrees for hour hand
 
   //! draw hub with little dot in center of hub
   tft.fillCircle(CENTER_X, CENTER_Y, HUB_R, C_ANALOG_HUB);
