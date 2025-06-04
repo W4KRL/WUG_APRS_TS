@@ -38,9 +38,11 @@ void analogClockFrame(bool drawFrame)
   const int SEC_HAND = INNER_TICK_R - SEC_DOT_R - 1; // dot with radius 2 on end of hand
   const int HOUR_HAND = 3 * MIN_HAND / 4;            // hour hand is 3/4 minute hand length
   const int HUB_R = 4;                               // hub radius
-  int x1, x2, x3, y1, y2, y3;                        // various coordinates
-  int deg;                                           // degrees
-  float rad, rad1, rad2, rad3;                       // radians
+  //! local variables
+  int x1, x2, x3, y1, y2, y3;  // various coordinates
+  int deg;                     // degrees
+  float degf;                  // degrees float
+  float rad, rad1, rad2, rad3; // radians
 
   //! draw clock face first time only to speed up graphics
   if (drawFrame)
@@ -120,6 +122,7 @@ void analogClockFrame(bool drawFrame)
   float erasedRad = DEGtoRAD(erasedHr * 30);  // Convert degrees to radians
   x1 = (CENTER_X + (sin(erasedRad) * PM_NUMERAL_R));
   y1 = (CENTER_Y - (cos(erasedRad) * PM_NUMERAL_R));
+  tft.setTextDatum(MC_DATUM); // set numeral middle center on numeral circle
   tft.setTextColor(C_ANALOG_PM_NUMERALS);
   tft.drawString(String(erasedHr), x1, y1);
 
@@ -131,18 +134,35 @@ void analogClockFrame(bool drawFrame)
   oldSrad = rad;                                               // save current radians for erase
 
   //! **** Process minute hand ****
-  deg = myTZ.minute() * 6;    // each minute advances 6 degrees
-  rad1 = DEGtoRAD(deg + 90);  // base of triangular hand
-  rad2 = DEGtoRAD(deg - 90);  // base of triangular hand
-  rad3 = DEGtoRAD(deg);       // point of hand
-  static float oldMdeg = deg; // save current degrees for triangle
+  degf = myTZ.minute() * 6 + myTZ.second() * 0.1; // add 0.1 degree for each second
+  rad1 = DEGtoRAD(degf + 90);                     // base of triangular hand
+  rad2 = DEGtoRAD(degf - 90);                     // base of triangular hand
+  rad3 = DEGtoRAD(degf);                          // point of hand
+  static float oldMdegf;                          // save current degrees for triangle
 
   //! erase previous minute hand
-  if (deg != oldMdeg)
+  if (fabs(degf - oldMdegf) > 0.01) // if minute hand has moved
   {
-    float oldMrad1 = DEGtoRAD(oldMdeg + 90);
-    float oldMrad2 = DEGtoRAD(oldMdeg - 90);
-    float oldMrad3 = DEGtoRAD(oldMdeg);
+    // float oldMdeg = oldMdegf; // convert to degrees
+    float oldMrad1 = DEGtoRAD(oldMdegf + 90);
+    float oldMrad2 = DEGtoRAD(oldMdegf - 90);
+    float oldMrad3 = DEGtoRAD(oldMdegf);
+    x1 = (CENTER_X + (sin(oldMrad1) * HUB_R));
+    y1 = (CENTER_Y - (cos(oldMrad1) * HUB_R));
+    x2 = (CENTER_X + (sin(oldMrad2) * HUB_R));
+    y2 = (CENTER_Y - (cos(oldMrad2) * HUB_R));
+    x3 = (CENTER_X + (sin(oldMrad3) * MIN_HAND));
+    y3 = (CENTER_Y - (cos(oldMrad3) * MIN_HAND));
+    tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_DIAL_BG); // erase previous minute hand
+  }
+  else // minute hand has not moved
+  {
+    return; // exit function if no change in minute hand
+  }
+  {
+    float oldMrad1 = DEGtoRAD(oldMdegf + 90);
+    float oldMrad2 = DEGtoRAD(oldMdegf - 90);
+    float oldMrad3 = DEGtoRAD(oldMdegf);
     x1 = (CENTER_X + (sin(oldMrad1) * HUB_R));
     y1 = (CENTER_Y - (cos(oldMrad1) * HUB_R));
     x2 = (CENTER_X + (sin(oldMrad2) * HUB_R));
@@ -150,7 +170,7 @@ void analogClockFrame(bool drawFrame)
     x3 = (CENTER_X + (sin(oldMrad3) * MIN_HAND));
     y3 = (CENTER_Y - (cos(oldMrad3) * MIN_HAND));
     tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_DIAL_BG);
-    oldMdeg = deg;
+    oldMdegf = degf;
   }
 
   //! draw new minute hand
@@ -165,20 +185,33 @@ void analogClockFrame(bool drawFrame)
   //! **** Process hour hand ****
   //! Must draw hour hand last as it is shortest hand
   int dialHour = to12HourFormat(myTZ.hour()); // convert to 12-hour format
+  static float oldHdegf;                      // save current degrees for triangle
   // 30 degree increments + adjust for minutes
   // Increment the minute hand in precise minute steps for better accuracy
-  deg = dialHour * 30 + int((myTZ.minute() / 12) * 6);
-  static float oldHdeg = deg;
-  rad1 = DEGtoRAD(deg + 90);
-  rad2 = DEGtoRAD(deg - 90);
-  rad3 = DEGtoRAD(deg);
+  degf = dialHour * 30 + 0.1 * myTZ.minute(); // each hour advances 30 degrees, add 0.1 degree for each minute);
+  rad1 = DEGtoRAD(degf + 90);
+  rad2 = DEGtoRAD(degf - 90);
+  rad3 = DEGtoRAD(degf);
 
   //! erase previous hour hand
-  if (deg != oldHdeg)
+  if (fabs(degf - oldHdegf) > 0.01) // if hour hand has moved
   {
-    float oldHrad1 = DEGtoRAD(oldHdeg + 90);
-    float oldHrad2 = DEGtoRAD(oldHdeg - 90);
-    float oldHrad3 = DEGtoRAD(oldHdeg);
+    float oldHrad1 = DEGtoRAD(oldHdegf + 90);
+    float oldHrad2 = DEGtoRAD(oldHdegf - 90);
+    float oldHrad3 = DEGtoRAD(oldHdegf);
+    x1 = (CENTER_X + (sin(oldHrad1) * HUB_R));
+    y1 = (CENTER_Y - (cos(oldHrad1) * HUB_R));
+    x2 = (CENTER_X + (sin(oldHrad2) * HUB_R));
+    y2 = (CENTER_Y - (cos(oldHrad2) * HUB_R));
+    x3 = (CENTER_X + (sin(oldHrad3) * HOUR_HAND));
+    y3 = (CENTER_Y - (cos(oldHrad3) * HOUR_HAND));
+    tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_DIAL_BG); // erase previous hour hand
+  }
+  else // hour hand has not moved
+  {
+    float oldHrad1 = DEGtoRAD(oldHdegf + 90);
+    float oldHrad2 = DEGtoRAD(oldHdegf - 90);
+    float oldHrad3 = DEGtoRAD(oldHdegf);
     x1 = (CENTER_X + (sin(oldHrad1) * HUB_R));
     y1 = (CENTER_Y - (cos(oldHrad1) * HUB_R));
     x2 = (CENTER_X + (sin(oldHrad2) * HUB_R));
@@ -186,7 +219,7 @@ void analogClockFrame(bool drawFrame)
     x3 = (CENTER_X + (sin(oldHrad3) * HOUR_HAND));
     y3 = (CENTER_Y - (cos(oldHrad3) * HOUR_HAND));
     tft.fillTriangle(x1, y1, x2, y2, x3, y3, C_ANALOG_DIAL_BG);
-    oldHdeg = deg; // save current degrees for hour hand
+    oldHdegf = degf; // save current degrees for hour hand
   }
   //! draw new hour hand
   x1 = (CENTER_X + (sin(rad1) * HUB_R));
