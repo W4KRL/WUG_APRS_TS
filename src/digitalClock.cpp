@@ -32,8 +32,6 @@
 #include "colors.h"
 #include "indoorSensor.h"
 
-// bool allowNumberFlip = false; // digital clock unpdate numerals
-
 /**
  * @brief Draws and updates a digital clock frame on the TFT display.
  *
@@ -87,6 +85,7 @@ void digitalClockFrame(bool shouldDrawFrame)
     tft.setTextColor(C_DIGITAL_LOCAL_TZ, C_DIGITAL_BG);
     tft.drawString(myTZ.getTimezoneName(), colLeft, row[2]);
     tft.drawString(myTZ.dateTime(hhmmssFmt), colLeft, row[3]);
+    
   }
   else
   {
