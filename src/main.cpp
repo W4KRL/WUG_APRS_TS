@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Karl Berger
- * @date 2025-06-02
+ * @date 2025-06-04
  * @brief Main application for the Magnetic Loop Antenna Controller
  * @details This program initializes communication with sensors and processes input data
  *          from the Weather Underground API, and formats it for display and posting to
@@ -30,6 +30,7 @@
 #include "indoorSensor.h"      // indoor sensor functions
 #include "onetimeScreens.h"    // splash screen and information screens
 #include "sequentialFrames.h"  // sequential weather and almanac frames
+#include "taskControl.h"       // task control functions
 #include "tftDisplay.h"        // TFT display functions
 #include "thingSpeakService.h" // ThingSpeak posting
 #include "timezone_globals.h"  // timezone object
@@ -37,14 +38,6 @@
 #include "weatherService.h"    // weather data from Weather Underground API
 #include "wifiConnection.h"    // Wi-Fi connection
 #include "wug_debug.h"         // debug print macro
-#include <TickTwo.h>           // v4.4.0 Stefan Staub https://github.com/sstaub/TickTwo
-
-//! Scheduled tasks
-TickTwo tmrGetWXcurrent(getWXcurrent, WX_CURRENT_INTERVAL * 60 * 1000, 0, MILLIS);
-TickTwo tmrGetWXforecast(getWXforecast, WX_FORECAST_INTERVAL * 60 * 1000, 0, MILLIS);
-TickTwo tmrPostWXtoAPRS(postWXtoAPRS, WX_APRS_INTERVAL * 60 * 1000, 0, MILLIS);
-TickTwo tmrPostWXtoThingspeak(postWXtoThingspeak, TS_POST_INTERVAL * 60 * 1000, 0, MILLIS);
-TickTwo tmrSecondTick(updateSequentialFrames, 1000, 0, MILLIS);
 
 /*
 ******************************************************
@@ -53,25 +46,19 @@ TickTwo tmrSecondTick(updateSequentialFrames, 1000, 0, MILLIS);
 */
 void setup()
 {
-  Serial.begin(115200);          // serial monitor
-  initSensor();                  // initialize indoor sensor
-  setupTFTDisplay();             // initialize TFT display
-  splashScreen();                // stays on until logon is complete
-  logonToRouter();               // connect to WiFi
-  getWXcurrent();                // find latitude & longitude for your weather station
-  setTimeZone();                 // set timezone
-  mountFS();                     // mount LittleFS and prepare APRS bulletin file
-  dataScreen();                  // show configuration data
-  getWXforecast();               // initialize weather data - needs lat/lon from getWXcurrent
-  postWXtoAPRS();                // post WXcurrent to APRS weather
-  delay(2000);                   // delay to show connection info
-  initSequentialFrames();        // initialize sequential frames
-                                 //! Start TickTwo timers
-  tmrGetWXcurrent.start();       // timer for current weather
-  tmrGetWXforecast.start();      // timer for forecasted weather
-  tmrPostWXtoThingspeak.start(); // timer for posting to ThingSpeak
-  tmrPostWXtoAPRS.start();       // timer for posting weather to APRS
-  tmrSecondTick.start();         // timer for second tick clock updates
+  Serial.begin(115200); // serial monitor
+  initSensor();         // initialize indoor sensor
+  setupTFTDisplay();    // initialize TFT display
+  splashScreen();       // stays on until logon is complete
+  logonToRouter();      // connect to WiFi
+  getWXcurrent();       // find latitude & longitude for your weather station
+  setTimeZone();        // set timezone
+  mountFS();            // mount LittleFS and prepare APRS bulletin file
+  dataScreen();         // show configuration data
+  getWXforecast();      // initialize weather data - needs lat/lon from getWXcurrent
+  postWXtoAPRS();       // post WXcurrent to APRS weather
+  delay(2000);          // delay to show connection info
+  startTasks();         // start the scheduled tasks
 } // setup()
 
 /*
@@ -81,14 +68,9 @@ void setup()
 */
 void loop()
 {
-  events();                       // ezTime events including autoconnect to NTP server
-  processBulletins();             // process APRS bulletins
-                                  //! Update the TickTwo timers
-  tmrGetWXcurrent.update();       // get current weather
-  tmrPostWXtoThingspeak.update(); // post selected current weather to ThingSpeak
-  tmrPostWXtoAPRS.update();       // post selected weather data to APRS
-  tmrGetWXforecast.update();      // get forecasted weather for display
-  tmrSecondTick.update();         // update seconds for clock & frame displays
+  events();           // ezTime events including autoconnect to NTP server
+  processBulletins(); // process APRS bulletins
+  updateTasks();      // update the scheduled tasks
 } // loop()
 
 /*
