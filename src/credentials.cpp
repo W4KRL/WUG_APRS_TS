@@ -1,7 +1,7 @@
 /**
  * @file credentials.cpp
  * @author Karl Berger
- * @date 2025-05-29
+ * @date 2025-06-04
  * @brief Wi-Fi, Weather Underground, APRS, and ThingSpeak credentials
  */
 
@@ -76,8 +76,10 @@ const unsigned int WX_FORECAST_INTERVAL = 13; // minutes between forecast reques
 const unsigned int SCREEN_DURATION = 5;       // display frame interval in !!!seconds!!!
 
 // Display selections
-//! Use true or false. No quote marks
-const bool DIGITAL_CLOCK = true;   // display digital clock (true/false)
+//! Use true/false values. No quote marks
+// If both clocks are false, no clock is displayed
+// If both clocks are true, digital clock is displayed
+const bool DIGITAL_CLOCK = false;  // display digital clock (true/false)
 const bool ANALOG_CLOCK = true;    // display analog clock (true/false)
 const bool METRIC_DISPLAY = false; // weather display units
 
