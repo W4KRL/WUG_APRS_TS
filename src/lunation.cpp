@@ -16,14 +16,14 @@
  *
  * Dependencies:
  * - tftDisplay.h: For drawing on the TFT display.
- * - timezone_globals.h: For time-related functions.
+ * - timeFunctions.h: For time-related functions.
  * - colors.h: For color definitions.
  */
 #include "lunation.h"	
 
 #include <Arduino.h>
 #include "tftDisplay.h"	
-#include "timezone_globals.h"
+#include "timeFunctions.h"
 #include "colors.h"
 
 /*
