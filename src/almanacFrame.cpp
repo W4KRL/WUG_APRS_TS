@@ -26,7 +26,7 @@
 #include "lunation.h"		  // for findPhaseName()
 #include "sequentialFrames.h" // for drawFramePanels()
 #include "tftDisplay.h"		  // for TFT display functions
-#include "timezone_globals.h" // for getOffset()
+#include "timeFunctions.h"	  // for getOffset()
 #include "unitConversions.h"  // for moonPhase()
 #include "weatherService.h"	  // for weather data
 
@@ -73,9 +73,9 @@ void almanacFrame()
 	tft.drawString("Almanac", SCREEN_W2, row[0]);
 	tft.drawString(dateTime("D M j"), SCREEN_W2, row[1]); // "Sat Aug 7"
 	tft.setTextColor(C_ALM_BOTTOM_TEXT);
-	tft.drawString("SUN", SCREEN_W2, row[2]);		
-	tft.drawString(sunRiseTime, SCREEN_W2, row[3]); 
-	tft.drawString(sunSetTime, SCREEN_W2, row[4]);	
+	tft.drawString("SUN", SCREEN_W2, row[2]);
+	tft.drawString(sunRiseTime, SCREEN_W2, row[3]);
+	tft.drawString(sunSetTime, SCREEN_W2, row[4]);
 
 	// panel for moon data
 	tft.fillRect(0, 90, SCREEN_W, SCREEN_H - 90, C_ALM_MOON_BG);
