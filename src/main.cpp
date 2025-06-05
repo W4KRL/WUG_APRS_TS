@@ -33,7 +33,7 @@
 #include "taskControl.h"       // task control functions
 #include "tftDisplay.h"        // TFT display functions
 #include "thingSpeakService.h" // ThingSpeak posting
-#include "timezone_globals.h"  // timezone object
+#include "timeFunctions.h"  // timezone object
 #include "unitConversions.h"   // unit conversions
 #include "weatherService.h"    // weather data from Weather Underground API
 #include "wifiConnection.h"    // Wi-Fi connection
