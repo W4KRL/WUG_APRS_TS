@@ -11,15 +11,15 @@
 
 #include "analogClock.h"
 
-#include <Arduino.h>          // Arduino functions
-#include "colors.h"           // for colors
-#include "credentials.h"      // for METRIC_DISPLAY
-#include "indoorSensor.h"     // for indoor sensor data
-#include "timezone_globals.h" // for getTimezoneName(), to12HourFormat()
-#include "tftDisplay.h"       // for TFT display functions
-#include "unitConversions.h"  // for temperature conversions
-#include <Adafruit_GFX.h>     // for fillTriangle and other graphics functions
-#include <TFT_eSPI.h>         // TFT display library
+#include <Arduino.h>         // Arduino functions
+#include "colors.h"          // for colors
+#include "credentials.h"     // for METRIC_DISPLAY
+#include "indoorSensor.h"    // for indoor sensor data
+#include "timeFunctions.h"   // for getTimezoneName(), to12HourFormat()
+#include "tftDisplay.h"      // for TFT display functions
+#include "unitConversions.h" // for temperature conversions
+#include <Adafruit_GFX.h>    // for fillTriangle and other graphics functions
+#include <TFT_eSPI.h>        // TFT display library
 
 void analogClockFrame(bool drawFrame)
 {
