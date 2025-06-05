@@ -28,7 +28,7 @@
 
 #include <Arduino.h>
 #include "tftDisplay.h"
-#include "timezone_globals.h"
+#include "timeFunctions.h"
 #include "colors.h"
 #include "indoorSensor.h"
 
