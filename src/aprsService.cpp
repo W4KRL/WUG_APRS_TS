@@ -2,20 +2,19 @@
  * @file aprsService.cpp
  * @brief Contains implementation functions for posting weather data and bulletins to APRS-IS.
  * @author Karl Berger
- * @date 2025-06-02
+ * @date 2025-06-09
  */
 
 #include "aprsService.h"
 
-#include <Arduino.h>		 // Arduino functions
-#include "credentials.h"	 // Wi-Fi and weather station credentials
-#include <WiFiClient.h>		 // APRS connection
-#include "weatherService.h"	 // weather data
-#include "unitConversions.h" // unit conversion functions
-#include "wug_debug.h"		 // debug print
-#include "timeFunctions.h"
-#include "aphorismGenerator.h"
-#include "thingspeakService.h"
+#include <Arduino.h>		   // Arduino functions
+#include <WiFiClient.h>		   // APRS connection
+#include "aphorismGenerator.h" // aphorism generator for bulletins
+#include "credentials.h"	   // APRS, Wi-Fi and weather station credentials
+#include "timeFunctions.h"	   // time functions
+#include "unitConversions.h"   // unit conversion functions
+#include "weatherService.h"	   // weather data
+#include "wug_debug.h"		   // debug print
 
 //! ***************** APRS *******************
 //            !!! DO NOT CHANGE !!!
@@ -26,12 +25,12 @@
 // Asia: asia.aprs2.net
 // Africa: africa.aprs2.net
 // Oceania: apan.aprs2.net
-const char* APRS_SERVER ="noam.aprs2.net";				   // recommended for North America
-const char* APRS_DEVICE_NAME ="https://w4krl.com/iot-kits/"; // link to my website
-#define APRS_SOFTWARE_NAME "D1S-VEVOR"				   // unit ID
-#define APRS_SOFTWARE_VERS FW_VERSION				   // FW version
-#define APRS_PORT 14580								   // do not change port
-#define APRS_TIMEOUT 2000L							   // milliseconds
+const char *APRS_SERVER = "noam.aprs2.net";					  // recommended for North America
+const char *APRS_DEVICE_NAME = "https://w4krl.com/iot-kits/"; // link to my website
+#define APRS_SOFTWARE_NAME "D1S-VEVOR"						  // unit ID
+#define APRS_SOFTWARE_VERS FW_VERSION						  // FW version
+#define APRS_PORT 14580										  // do not change port
+#define APRS_TIMEOUT 2000L									  // milliseconds
 
 //! ************ APRS Bulletin globals ***************
 // int *lineArray;				 // holds shuffled index to aphorisms
@@ -61,10 +60,6 @@ void postToAPRS(String message)
 	{
 		DEBUG_PRINTLN(F("APRS connection failed."));
 	}
-	if (!client.connected())
-	{
-		return;
-	}
 
 	String rcvLine = client.readStringUntil('\n');
 	DEBUG_PRINTLN("Rcvd: " + rcvLine);
@@ -73,7 +68,15 @@ void postToAPRS(String message)
 		DEBUG_PRINTLN(F("APRS port full. Retrying."));
 		client.stop(); // disconnect from port
 		delay(500);
-		client.connect(APRS_SERVER, APRS_PORT); // retry
+		if (client.connect(APRS_SERVER, APRS_PORT)) // retry
+		{
+			DEBUG_PRINTLN(F("APRS reconnected successfully."));
+		}
+		else
+		{
+			DEBUG_PRINTLN(F("APRS reconnection failed."));
+			return; // Exit if reconnection fails
+		}
 	}
 
 	// send APRS-IS logon info
@@ -145,10 +148,9 @@ String APRSformatWeather()
 	return dataString;
 } // APRSformatWeather()
 
-// ********** weather callback ********
+// ******** weather TickTwo callback ********
 void postWXtoAPRS()
 {
-	// callback for weather
 	postToAPRS(APRSformatWeather());
 }
 
@@ -174,10 +176,9 @@ String APRSformatBulletin(String message, String ID)
 	return str;
 } // APRSformatBulletin()
 
-// ********** bulletin callback ********
+// ******** bulletin TickTwo callback ********
 void APRSsendBulletin(String msg, String ID)
 {
-	// callback for bulletin
 	postToAPRS(APRSformatBulletin(msg, ID));
 }
 
@@ -239,40 +240,63 @@ String APRSlocation(float lat, float lon)
 	return String(buf);
 } // APRSlocation()
 
-void processBulletins(){
-	  //! process APRS bulletins
-  //? Check if it is 0800 EST and the morning bulletin has not been sent
-  String bulletinText = "";
-  if (myTZ.hour() == 8 && myTZ.minute() == 0 && !amBulletinSent)
-  {
-    bulletinText = pickAphorism(APHORISM_FILE, lineArray);
-    APRSsendBulletin(bulletinText, "M"); // send morning bulletin
-    amBulletinSent = true;               // mark it sent
+void processBulletins()
+{
+	//! process APRS bulletins
+	//? Check if it is 0800 EST and the morning bulletin has not been sent
+	String bulletinText = "";
+	if (myTZ.hour() == 8 && myTZ.minute() == 0 && !amBulletinSent)
+	{
+		bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+		APRSsendBulletin(bulletinText, "M"); // send morning bulletin
+		amBulletinSent = true;				 // mark it sent
+	}
 
-    // unitStatus = myTZ.dateTime("d M ~A~M ") + bulletinText;
-    // postToThingSpeak();
-    unitStatus = "";
-  }
-  
-  //? Check if it is 2000 EST and the evening bulletin has not been sent
-  if (myTZ.hour() == 20 && myTZ.minute() == 0 && !pmBulletinSent)
-  {
-    bulletinText = pickAphorism(APHORISM_FILE, lineArray);
-    APRSsendBulletin(bulletinText, "E"); // send evening bulletin
-    pmBulletinSent = true;               // mark it sent
+	//? Check if it is 2000 EST and the evening bulletin has not been sent
+	if (myTZ.hour() == 20 && myTZ.minute() == 0 && !pmBulletinSent)
+	{
+		bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+		APRSsendBulletin(bulletinText, "E"); // send evening bulletin
+		pmBulletinSent = true;				 // mark it sent
+	}
 
-    unitStatus = myTZ.dateTime("d M ~P~M ") + bulletinText;
-    // postToThingSpeak();
-    // unitStatus = "";
-  }
-
-  //? Reset the bulletin flags at midnight if either is true
-  static int lastDay = -1;
-  int currentDay = myTZ.day();
-  if (currentDay != lastDay)
-  {
-    lastDay = currentDay;
-    amBulletinSent = false;
-    pmBulletinSent = false;
-  }
+	//? Reset the bulletin flags at midnight if either is true
+	static int lastDay = -1;
+	int currentDay = myTZ.day();
+	if (currentDay != lastDay)
+	{
+		lastDay = currentDay;
+		amBulletinSent = false;
+		pmBulletinSent = false;
+	}
 }
+
+// ********** Bulletin scheduling functions **********
+// void sendMorningBulletin() {
+//     if (!amBulletinSent) {
+//         String bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+//         APRSsendBulletin(bulletinText, "M");
+//         amBulletinSent = true;
+//     }
+//     // Re-schedule for tomorrow at 8:00
+//     myTZ.setEvent(sendMorningBulletin, 8, 0, 0);
+// }
+
+// void sendEveningBulletin() {
+//     if (!pmBulletinSent) {
+//         String bulletinText = pickAphorism(APHORISM_FILE, lineArray);
+//         APRSsendBulletin(bulletinText, "E");
+//         pmBulletinSent = true;
+//     }
+//     // Re-schedule for tomorrow at 20:00
+//     myTZ.setEvent(sendEveningBulletin, 20, 0, 0);
+// }
+
+// void resetBulletinFlags() {
+//     amBulletinSent = false;
+//     pmBulletinSent = false;
+//     // Reschedule for next midnight
+//     myTZ.setEvent(resetBulletinFlags, 0, 0, 0);
+// }
+
+
