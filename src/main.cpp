@@ -33,7 +33,7 @@
 #include "taskControl.h"       // task control functions
 #include "tftDisplay.h"        // TFT display functions
 #include "thingSpeakService.h" // ThingSpeak posting
-#include "timeFunctions.h"  // timezone object
+#include "timeFunctions.h"     // timezone object
 #include "unitConversions.h"   // unit conversions
 #include "weatherService.h"    // weather data from Weather Underground API
 #include "wifiConnection.h"    // Wi-Fi connection
@@ -56,8 +56,8 @@ void setup()
   mountFS();            // mount LittleFS and prepare APRS bulletin file
   dataScreen();         // show configuration data
   getWXforecast();      // initialize weather API: needs lat/lon from getWXcurrent
-  delay(2000);  // delay to show connection info
-  startTasks(); // start the scheduled tasks
+  delay(2000);          // delay to show connection info
+  startTasks();         // start the scheduled tasks
 } // setup()
 
 /*
