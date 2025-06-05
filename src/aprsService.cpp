@@ -13,7 +13,7 @@
 #include "weatherService.h"	 // weather data
 #include "unitConversions.h" // unit conversion functions
 #include "wug_debug.h"		 // debug print
-#include "timezone_globals.h"
+#include "timeFunctions.h"
 #include "aphorismGenerator.h"
 #include "thingspeakService.h"
 
