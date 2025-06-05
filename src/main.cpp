@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Karl Berger
- * @date 2025-06-04
+ * @date 2025-06-05
  * @brief Main application for the Magnetic Loop Antenna Controller
  * @details This program initializes communication with sensors and processes input data
  *          from the Weather Underground API, and formats it for display and posting to
@@ -29,7 +29,7 @@
 #include "digitalClock.h"      // digital clock display
 #include "indoorSensor.h"      // indoor sensor functions
 #include "onetimeScreens.h"    // splash screen and information screens
-#include "sequentialFrames.h"  // sequential weather and almanac frames
+#include "sequentialFrames.h"  // sequential weather, almanac, and clock frames
 #include "taskControl.h"       // task control functions
 #include "tftDisplay.h"        // TFT display functions
 #include "thingSpeakService.h" // ThingSpeak posting
@@ -46,7 +46,7 @@
 */
 void setup()
 {
-  Serial.begin(115200); // serial monitor
+  Serial.begin(115200); // initialize serial monitor
   initSensor();         // initialize indoor sensor
   setupTFTDisplay();    // initialize TFT display
   splashScreen();       // stays on until logon is complete
@@ -55,10 +55,9 @@ void setup()
   setTimeZone();        // set timezone
   mountFS();            // mount LittleFS and prepare APRS bulletin file
   dataScreen();         // show configuration data
-  getWXforecast();      // initialize weather data - needs lat/lon from getWXcurrent
-  postWXtoAPRS();       // post WXcurrent to APRS weather
-  delay(2000);          // delay to show connection info
-  startTasks();         // start the scheduled tasks
+  getWXforecast();      // initialize weather API: needs lat/lon from getWXcurrent
+  delay(2000);  // delay to show connection info
+  startTasks(); // start the scheduled tasks
 } // setup()
 
 /*
@@ -68,9 +67,10 @@ void setup()
 */
 void loop()
 {
-  events();           // ezTime events including autoconnect to NTP server
-  processBulletins(); // process APRS bulletins
-  updateTasks();      // update the scheduled tasks
+  checkWiFiConnection(); // check Wi-Fi connection status
+  events();              // ezTime events including autoconnect to NTP server
+  processBulletins();    // process APRS bulletins
+  updateTasks();         // update the scheduled tasks
 } // loop()
 
 /*

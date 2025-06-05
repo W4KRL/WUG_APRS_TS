@@ -11,7 +11,9 @@
 #ifndef WIFI_CONNECTION_H
 #define WIFI_CONNECTION_H
 
-void logonToRouter(); // function to connect to Wi-Fi
+void logonToRouter();		// function to connect to Wi-Fi
+void checkWiFiConnection(); // function to check Wi-Fi connection status
 
 #endif // WIFI_CONNECTION_H
+
 // End of file
