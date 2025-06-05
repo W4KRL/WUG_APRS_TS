@@ -1,7 +1,7 @@
 /**
  * @file    almanacFrame.cpp
  * @author  Karl Berger
- * @date    2025-05-29
+ * @date    2025-06-05
  * @brief   Draws the Almanac frame on the TFT display.
  *
  * This function displays the current date, sunrise and sunset times,
@@ -22,13 +22,13 @@
 #include "almanacFrame.h" // almanac frame
 
 #include <Arduino.h>		  // Arduino functions
+#include "colors.h"			  // for colors
+#include "lunation.h"		  // for findPhaseName()
+#include "sequentialFrames.h" // for drawFramePanels()
 #include "tftDisplay.h"		  // for TFT display functions
 #include "timezone_globals.h" // for getOffset()
 #include "unitConversions.h"  // for moonPhase()
-#include "colors.h"			  // for colors
-#include "sequentialFrames.h" // for drawFramePanels()
 #include "weatherService.h"	  // for weather data
-#include "lunation.h"		  // for findPhaseName()
 
 void almanacFrame()
 {
@@ -51,16 +51,17 @@ void almanacFrame()
 	hh = to12HourFormat(hh);
 	snprintf(sunSetTime, sizeof(sunSetTime), "Set %2d:%02dp", hh, mm);
 
+	// Process moon phase
 	float fraction = moonPhase();				  // find moon phase
 	phaseName moonName = findPhaseName(fraction); // returns two Strings
 
+	// Draw the Almanac frame
 	drawFramePanels(C_ALM_TOP_BG, C_ALM_BOTTOM_BG);
-
 	tft.setTextColor(C_ALM_TOP_TEXT);
 	tft.setTextDatum(TC_DATUM); // centered text
 	tft.setFreeFont(LargeBold);
 
-	int row[7];
+	int row[7]; // row positions in pixels for text
 	int textHeight = tft.fontHeight();
 	int lineSpacing = -1; // squeeze the lines together
 	row[0] = 1;			  // top row
@@ -72,9 +73,9 @@ void almanacFrame()
 	tft.drawString("Almanac", SCREEN_W2, row[0]);
 	tft.drawString(dateTime("D M j"), SCREEN_W2, row[1]); // "Sat Aug 7"
 	tft.setTextColor(C_ALM_BOTTOM_TEXT);
-	tft.drawString("SUN", SCREEN_W2, row[2]);		// 41
-	tft.drawString(sunRiseTime, SCREEN_W2, row[3]); // 56
-	tft.drawString(sunSetTime, SCREEN_W2, row[4]);	// 72
+	tft.drawString("SUN", SCREEN_W2, row[2]);		
+	tft.drawString(sunRiseTime, SCREEN_W2, row[3]); 
+	tft.drawString(sunSetTime, SCREEN_W2, row[4]);	
 
 	// panel for moon data
 	tft.fillRect(0, 90, SCREEN_W, SCREEN_H - 90, C_ALM_MOON_BG);
