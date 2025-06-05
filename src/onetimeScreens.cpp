@@ -11,7 +11,7 @@
 #include "credentials.h"
 #include "weatherService.h"
 #include "colors.h"
-#include "timezone_globals.h"
+#include "timeFunctions.h"
 
 /*
 ******************************************************
