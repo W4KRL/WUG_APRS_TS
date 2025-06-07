@@ -2,7 +2,7 @@
  * @file main.cpp
  * @author Karl Berger
  * @date 2025-06-05
- * @brief Main application for the Magnetic Loop Antenna Controller
+ * @brief Main program for Weather Underground, APRS-IS and Thingspeak integration
  * @details This program initializes communication with sensors and processes input data
  *          from the Weather Underground API, and formats it for display and posting to
  *          ThingSpeak, and APRS-IS.
