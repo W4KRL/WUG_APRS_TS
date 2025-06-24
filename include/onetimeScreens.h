@@ -10,8 +10,8 @@
 #ifndef ONETIME_SCREENS_H
 #define ONETIME_SCREENS_H
 
-void splashScreen();
-void dataScreen();
+void showSplashScreen();
+void showDataScreen();
 
 #endif // ONETIME_SCREENS_H
 // End of file

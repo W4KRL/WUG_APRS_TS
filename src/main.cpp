@@ -48,13 +48,13 @@ void setup()
 {
   Serial.begin(115200); // initialize serial monitor
   initSensor();         // initialize indoor sensor
-  setupTFTDisplay();    // initialize TFT display
-  splashScreen();       // stays on until logon is complete
+  setupTFTdisplay();    // initialize TFT display
+  showSplashScreen();   // stays on until logon is complete
   logonToRouter();      // connect to WiFi
   getWXcurrent();       // find latitude & longitude for your weather station
   setTimeZone();        // set timezone
   mountFS();            // mount LittleFS and prepare APRS bulletin file
-  dataScreen();         // show configuration data
+  showDataScreen();     // show configuration data
   getWXforecast();      // initialize weather API: needs lat/lon from getWXcurrent
   delay(2000);          // delay to show connection info
   startTasks();         // start the scheduled tasks

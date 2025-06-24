@@ -18,7 +18,7 @@
 ******************* Splash Screen ********************
 ******************************************************
 */
-void splashScreen()
+void showSplashScreen()
 {
   // 2025-05-23
   tft.setFreeFont(LargeBold);
@@ -52,7 +52,7 @@ void splashScreen()
 ****************** Data Screen ***********************
 ******************************************************
 */
-void dataScreen()
+void showDataScreen()
 {
   // 2025-05-23
   tft.fillScreen(BLACK); // clear screen
